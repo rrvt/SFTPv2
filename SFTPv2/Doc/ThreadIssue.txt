@@ -1,0 +1,129 @@
+I tried various things to see if I could set the unitOp member of the UnitDsc object after calling
+the functions that ultimately start the thread to do the transfer to the web host.
+
+bool Site::put(UnitDsc& ud) {
+String localPath;
+
+  ud.unitOp = ProcOp;
+
+  if (!RemoteSite::createDir(ud.key.path)) return false;
+
+  localPath = LocalSite::getPath(ud.key.path);
+
+  if (!doc()->loadXfrBuffer(localPath)) return false;
+
+  if (!RemoteSite::storTransport(ud.key.path)) return false;    // Ultimately starts a thread
+
+ ud.unitOp = PutDone;                                           // fails to perform
+
+  closeTransport();   sendStepPrgBar();   return true;
+  }
+
+
+// First thing I tried was to make the argument volatile
+
+bool Site::put(volatile UnitDsc& ud) {
+String localPath;
+
+  ud.unitOp = ProcOp;
+
+  if (!RemoteSite::createDir(ud.key.path)) return false;      // Fails because ud.key.path is an
+                                                              // "volatile String" which has no
+                                                              // conversion to TCchar* (but
+                                                              // String does have a conversion)
+  localPath = LocalSite::getPath(ud.key.path);
+
+  if (!doc()->loadXfrBuffer(localPath)) return false;
+
+  if (!RemoteSite::storTransport(ud.key.path)) return false;  // Ultimately starts a thread
+
+ ud.unitOp = PutDone;                                         // fails to perform
+
+  closeTransport();   sendStepPrgBar();   return true;
+  }
+
+
+// Then I tried a volatile local variable
+
+bool Site::put(UnitDsc& ud) {
+String localPath;
+
+volatile UnitOp* uOp = &ud.unitOp;
+
+  ud.unitOp = ProcOp;
+
+  if (!RemoteSite::createDir(ud.key.path)) return false;
+
+  localPath = LocalSite::getPath(ud.key.path);
+
+  if (!doc()->loadXfrBuffer(localPath)) return false;
+
+  if (!RemoteSite::storTransport(ud.key.path)) return false;
+
+  *uOp = PutDone;                                             // Breakpoint on this line and the
+                                                              // code is never executed.
+  closeTransport();   sendStepPrgBar();   return true;
+  }
+
+
+// Curiouser and Curiouser
+// The only thing I have found that works is the following:
+
+// In Site.h
+
+class Site : public LocalSite, public RemoteSite {
+
+static volatile UnitDsc* lastDsc;
+  o o o
+  };
+
+extern Site site;
+
+
+// In Site.cpp
+
+volatile UnitDsc* Site::lastDsc;
+
+
+void Site::performOp(UnitDsc* dsc) {
+
+  lastDsc = dsc;                                              // Save the descriptor in a
+                                                              // static volatile
+
+  switch (dsc->unitOp) {
+
+    case NilOp      : break;
+    case PutOp      : put(*dsc);   lastDsc->unitOp = PutDone;   break;
+    case GetOp      : get(*dsc);   lastDsc->unitOp = GetDone;   break;
+    case DelOp      : del(*dsc);   lastDsc->unitOp = DelDone;   break;
+    case MkLclDirOp : break;
+    case MkRmtDirOp : break;
+    default         : break;
+    }
+  }
+
+
+
+bool Site::put(UnitDsc& ud) {
+String localPath;
+
+  ud.unitOp = ProcOp;
+
+  if (!RemoteSite::createDir(ud.key.path)) return false;
+
+  localPath = LocalSite::getPath(ud.key.path);
+
+  if (!doc()->loadXfrBuffer(localPath)) return false;
+
+  if (!RemoteSite::storTransport(ud.key.path)) return false;
+
+  closeTransport();   sendStepPrgBar();   return true;
+  }
+
+
+Now when I worked on a time sharing operating system in the late 60s, early 70s processes were
+started by loading the content of what we called the context block in the hardware.  It was
+everything needed by the process to run independently of all other processes.
+
+Apparently that is not true for threads.  They appear to corrupt the current state of the running
+thread when a new one is started.  Not a good situation...

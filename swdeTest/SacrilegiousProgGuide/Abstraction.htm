@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<html lang="en"><!-- InstanceBegin template="/Templates/pageGuide.dwt" codeOutsideHTMLIsLocked="false" --> 
+<head>
+
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Abstraction</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+
+<link href="../stylesheet.css"    rel="stylesheet" />
+<link href="../Graphics/Icon.ico" rel="shortcut icon" />
+
+<!--[if lte IE 7]>
+<style>
+.content { margin-right: -1px; } /* this 1px negative margin can be placed on any of the columns in
+                                                                        this layout with the same corrective effect. */
+ul.nav a { zoom: 1; }                    /* the zoom property gives IE the hasLayout trigger it needs to correct
+                                                                        extra whiltespace between the links */
+</style>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript">
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+</script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <hgroup>
+      <a href="../index.htm" id="LogoLink"><img src="../Graphics/swdeLogo200.jpg" alt="Logo" /></a>
+      <div class="TitleBlock">
+        <a href="../index.htm">
+            <h1>Software Design &amp; Engineering</h1>
+            <h1>
+                    <!-- InstanceBeginEditable name="PageTitle" -->
+            Abstraction
+          <!-- InstanceEndEditable -->
+          </h1>
+        </a>
+      </div>
+      <div class="TitleBlock" id="DropDown">
+        <ul>
+          <li><a href="../index.htm">Home</a></li>
+          <li><a href="../Modules/index.htm">Modules</a>
+            <ul id="ModulesDrop">
+              <li><a href="../Modules/PersonalProjs/KeePass.htm">KeePass/LastPass</a></li>
+              <li><a href="../Modules/CodingProjs/MyLibrary.htm">Library</a></li>
+              <li><a href="../Modules/PersonalProjs/MvMp3.htm">Move Mp3 Tracks</a></li>
+              <li><a href="../Modules/SJRACESProjs/PreOutpost.htm">PreOutpost</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm">Print Program (pp)</a></li>
+              <li><a href="../Modules/SJRACESProjs/RWracesDB.htm">Read/Write RACES DB</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm#SetEnv">Set Environment Var</a></li>
+              <li><a href="../Modules/CodingProjs/StringModules.htm">String Class</a></li>
+              <li><a href="../Modules/CodingProjs/WixApp.htm">WixApp</a></li>
+            </ul>
+          </li>
+          <li><a href="../Pictures.htm">Pictures</a></li>
+          <li><a href="index.htm">Prog Guide</a>
+            <ul id="ModulesDrop">
+              <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+              <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+              <li><a href="Abstraction.htm">Abstraction</a></li>
+              <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+              <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+              <li><a href="HidingDetails.htm">Hiding Details</a></li>
+              <li><a href="Expandable.htm">Expandable</a></li>
+              <li><a href="qsort.htm">qsort</a></li>
+              <li><a href="Strings.htm">Strings</a></li>
+<!--
+             <li>Packages and/or Objects</li>
+             <li>Loops in Objects</li>
+             <li>Building Blocks</li>
+             <li>Vectors (Arrays)</li>
+-->          
+            </ul>
+          </li>
+        </ul>
+      </div>
+        </hgroup>
+  </header>
+
+  <div class="sidebar1">
+    <nav>
+      <ul>
+        <li><a href="../index.htm">Home</a></li>
+        <li><a href="../Modules/index.htm">Modules &amp; Projects</a></li>
+        <ul id="Modules">
+        <li><a href="../Modules/CodingProjs/index.htm">Coding Projects</a></li>
+        <li><a href="../Modules/DataBaseProjs/index.htm">Data Base Projects</a></li>
+        <li><a href="../Modules/PersonalProjs/index.htm">Personal Projects</a></li>
+        <li><a href="../Modules/SJRACESProjs/index.htm">SJ RACES Projects</a></li>
+        </ul>
+        <li><a href="../Pictures.htm">Pictures</a></li>
+        <li><a href="index.htm">Programming Guide</a></li>
+          <ul id="Modules">
+            <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+            <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+            <li><a href="Abstraction.htm">Abstraction</a></li>
+            <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+            <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+            <li><a href="HidingDetails.htm">Hiding Details</a></li>
+            <li><a href="Expandable.htm">Expandable</a></li>
+            <li><a href="qsort.htm">qsort</a></li>
+            <li><a href="Strings.htm">Strings</a></li>
+<!--        <li>Packages and/or Objects</li>
+            <li>Vectors (Arrays)</li>
+            <li>Loops in Objects</li>
+            <li>Building Blocks</li>
+-->
+          </ul>
+        <li><a href="../about.htm">About Bob</a></li>
+      </ul>
+    </nav>
+  </div><!-- end .sidebar1 -->
+
+  <article class="content"><!-- InstanceBeginEditable name="Content" -->
+  <section>
+    <h2>Abstraction</h2>
+    <p>
+        Abstraction is the process of considering something independently of its associations, attributes, or
+      concrete accompaniments.  In our world (i.e. computer science) abstraction means displaying only
+      essential information and hiding the details.
+    </p>
+    <p>
+        Back in the day it meant hiding details in files, one file for each "abstraction" or package.  The hidden
+    stuff was not made globally known (languages did that differently).  The stuff that needed to be known
+    was made known globally.  This is not the best solution to hiding things but it just had to do.
+    Some languages allowed declarations that could be "included" into another file.
+    </p>
+    <p>
+        Now we have header files that can include declarations of everything we need to know to call a
+    function.  Variables must have the correct type or be converted to the correct type in every function
+    call and in the return value.  It is easy to separate the declarations in one file (called a
+    "header" file) from the definitions
+    in another file (typically called the body).  Only those things that need to made visible are visible.
+    </p>
+    <p>
+        In "C" the modifier "static" is used to hide data and functions in a file.  In "C++" the class provides
+    the perfect way to house an abstraction.
+    </p>
+    <p>
+        So what exactly is an abstraction?  The example that most people use is: "Bob".  Bob is an example of
+    a class called "Human" or maybe "Person" or perhaps "Animal".  A Human has attributes, for example:
+    arms, legs, head, eyes, etc.  Some of the attributes are hidden, for example: stomach, liver, brain.
+    A human may be called on to perform a task, for example: Drink Water, Lift Bale, Run Away.
+    </p>
+    <p>
+        Some abstractions do not lend themselves to easy descriptions and are merely a collection of
+    related functions.  I don't get carried away with Object Oriented Programming paradigm but I do
+    make sure to hide all unnecessary details from the outside world.
+    </p>
+    <h3>Header File Organization</h3>
+    <p>
+        A header file must have a few components.  After they are in place the rest of the file is up to
+    the purpose of the file.  Here is the template that I use every time (This file is named IdentityInfo.h):
+    </p>
+    <table width=100%>
+    <tr><td><Code>// Identity Info Class</Code></td></tr>
+    <tr><td><Code>// rrvt Copyright, all rights reserved</Code></td></tr>
+    <tr><td><Code></Code></td></tr>
+    <tr><td><Code></Code></td></tr>
+    <tr><td><Code>#pragma once</Code></td></tr>
+    <tr><td><Code>#include "RequiredHeaderFile.h"</Code></td></tr>
+    </table><br>
+    <p>
+        The first line describe the "abstraction" in a very high level (i.e. one line if possible).
+    The second line has any identity information, copyright data.  Following the second line one could
+    put an elaborate description of the purpose, interface and other details.  I usually don't do that
+    since I would never read it and during development it would needed to be updated and I would
+    probably not get around to it.
+    </p>
+    <p>
+    The "#pragma once" line is essential so the compiler does not choke on some declarations.
+    Initially no include files lines are placed in a header file.  
+    However, if a decleration in the  first header file  requires a second header it should be included.
+    Then no matter where the first header file is included all the declerations it needs are included.
+    </p>
+    <p>
+    When I was programming in non-Windows environments I included any required system header files after 
+    all of my project's header files.  This removes the possibilty of unintended declerations for the other
+    header files.  This avoids an order dependency in the include file declarations.
+    </p>
+    
+    <p>
+		Except for Visual Studio's pch.h file I only add an include file to a header file if an object of
+    another class is included in the header file.  An object declaration requires the definition of the 
+    object, i.e. the class definition which appears in a header file.  So include it.
+    </p>
+
+    <p>
+    However, there is one other little declaration that should be mentioned somewhere.  
+    If the class and/or a function needs a reference or pointer to another object then there is a 
+    little trick that avoids conflicting inclusion of header files.  
+    Essentally a reference and pointer only needs the name and language element in the header file.
+    Then the header file of the element is included in the body file to allow using the element.  
+    Here is an example:
+    </p>
+    <table width=100%>
+    <tr><td><Code>// Identity Info Class</Code></td></tr>
+    <tr><td><Code>// rrvt Copyright, all rights reserved</Code></td></tr>
+    <tr><td><Code></Code></td></tr>
+    <tr><td><Code></Code></td></tr>
+    <tr><td><Code>#pragma once</Code></td></tr>
+    <tr><td><Code/></td></tr>
+    <tr><td><Code>class AnotherClass;</Code></td></tr>
+    <tr><td><Code></Code></td></tr>
+    <tr><td><Code>class MyClass {</Code></td></tr>
+    <tr><td><Code>AnotherClass& anotherClass;</Code></td></tr>
+    <tr><td><Code>public:</Code></td></tr>
+    <tr><td><Code>&nbsp;&nbsp;MyClass(AnotherClass& anClass) : anotherClass(anClass) { }</Code></td></tr>
+    <tr><td><Code>&nbsp;&nbsp;&nbsp;&nbsp;o o o </Code></td></tr>
+    </table><br>
+
+    <p>
+    Of course if the object is to be used in the body of MyClass, the body file (i.e. MyClass.cpp)
+    then the header file for AnotherClass must be included in the body file.  The advantage of this
+    is that a reference or pointer to MyClass may be included in the AnotherClass definition.
+    </p>
+
+    <h3>Body File</h3>
+    <p>
+        The body file contains all the hidden stuff.  The header file contains the public stuff.  But there is
+    potential problem.  Both files should compile to represent the same interface.  There is one way to
+    ensure that happens.  Here is my solution to this (This file is named IdentityInfo.cpp):
+    </p>
+    <table width=100%>
+    <tr><td><Code>// Identity Info Class</Code></td></tr>
+    <tr><td><Code>// rrvt Copyright, all rights reserved</Code></td></tr>
+    <tr><td><Code></Code></td></tr>
+    <tr><td><Code></Code></td></tr>
+    <tr>
+      <td><Code>#include "pch.h"&nbsp;&nbsp;&nbsp;//&nbsp;used to be stdafx.h</Code></td></tr>
+    <tr><td><Code>#include "IdentityInfo.h"</Code></td></tr>
+    </table><br>
+        <p>
+        The first two lines are copied out of the header file (or vice versa).  Any other header
+        documentation can be copied here (or not).  The first include line must be the pch.h (used to be
+        stdafx.h) by order of Visual Studio.  Only one exception and that is when the option for 
+        precompiled header files is turned off.  The second include line should be the header file 
+        that corresponds to the body file.  The should have
+    the same main name (i.e. the main name is the part of the name before the period). This will ensure
+    that the the header and body file compile the same way.
+    </p>
+    <p>
+    Any other header files are placed after the header file that corresponds to the body.  I usually
+    place them in alphabetical order for convenience.  
+    </p>
+    <p>
+        by the way, I've discovered that for my small programs, turning off the precompiled header file option
+    makes the compilation less subject to the whims of the compiler when there are frequent changes in the
+    source.  I am not sure why that is the case, but the compiler seemed to get tripped up at times.
+    </p>
+
+  </section>
+  <!-- InstanceEndEditable --></article>
+  <!-- end .content -->
+
+  <footer>
+    <hr />
+    <div>
+      <a href="../index.htm">Home</a>&nbsp;&nbsp;
+      <a href="../Modules/index.htm">Modules</a>&nbsp;&nbsp;
+      <a href="../Pictures.htm">Pictures</a>
+      <a href="index.htm">Prog Guide</a>
+    </div>
+    <div>eMail: romeo romeo victor tango alpha tango sam whiskey delta echo dot charlie oscar mike</a></div>
+    <div>Last modified:&nbsp; <!-- #BeginDate format:Am2 -->7/28/24<!-- #EndDate --></div>
+    <div align="center">Copyright SD&E.&nbsp; All rights reserved.</div>
+  </footer>
+  <!-- end .container -->
+</div></body>
+<!-- InstanceEnd --></html>

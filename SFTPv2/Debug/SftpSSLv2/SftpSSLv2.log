@@ -1,0 +1,3 @@
+﻿  SftpCommand.cpp
+Library.lib(SETUPAPI.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in Library.lib(VERSION.dll); second definition ignored
+  SftpSSLv2.vcxproj -> D:\Sources\SFTPv2\Debug\SftpSSLv2.lib

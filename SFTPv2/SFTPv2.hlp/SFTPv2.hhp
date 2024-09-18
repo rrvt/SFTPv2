@@ -1,0 +1,24 @@
+[OPTIONS]
+Auto TOC=1
+Binary Index=No
+Compatibility=1.1 or later
+Compiled file=SFTPv2.chm
+Contents file=SFTPv2.hhc
+Default Font=Arial,12,0
+Default Window=Introduction
+Default topic=Introduction.htm
+Display compile progress=No
+Error log file=SFTPv2.log
+Language=0x409 English (United States)
+Title=Test App Help
+
+[WINDOWS]
+Introduction="Introduction","SFTPv2.hhc",,"Introduction.htm",,,,,,0x42120,,0x3006,,,,,,,,0
+
+
+[FILES]
+Introduction.htm
+Operations.htm
+
+[INFOTYPES]
+

@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html lang="en"><!-- InstanceBegin template="/Templates/pageModule.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>WixApp - A program to produce Product.wxs</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+
+<link href="../../stylesheet.css"    rel="stylesheet" />
+<link href="../../Graphics/Icon.ico" rel="shortcut icon" />
+
+<!--[if lte IE 7]>
+<style>
+.content { margin-right: -1px; } /* this 1px negative margin can be placed on any of the columns in
+                                                                        this layout with the same corrective effect. */
+ul.nav a { zoom: 1; }                    /* the zoom property gives IE the hasLayout trigger it needs to correct
+                                                                        extra whiltespace between the links */
+</style>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript">
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+</script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <hgroup>
+      <a href="../../index.htm" id="LogoLink"><img src="../../Graphics/swdeLogo200.jpg" alt="Logo" /></a>
+      <div class="TitleBlock">
+        <a href="../../index.htm">
+            <h1>Software Design &amp; Engineering</h1>
+            <h1>
+                    <!-- InstanceBeginEditable name="PageTitle" -->
+            WixApp - A program to produce Product.wxs
+          <!-- InstanceEndEditable -->
+          </h1>
+        </a>
+      </div>
+      <div class="TitleBlock" id="DropDown">
+        <ul>
+          <li><a href="../../index.htm">Home</a></li>
+          <li><a href="../index.htm">Modules</a>
+            <ul id="ModulesDrop">
+              <li><a href="../PersonalProjs/KeePass.htm">KeePass/LastPass</a></li>
+              <li><a href="MyLibrary.htm">Library</a></li>
+              <li><a href="../PersonalProjs/MvMp3.htm">Move Mp3 Tracks</a></li>
+              <li><a href="../SJRACESProjs/PreOutpost.htm">PreOutpost</a></li>
+              <li><a href="../PersonalProjs/PrntProgramAndWix.htm">Print Program (pp)</a></li>
+              <li><a href="../SJRACESProjs/RWracesDB.htm">Read/Write RACES DB</a></li>
+              <li><a href="../PersonalProjs/PrntProgramAndWix.htm#SetEnv">Set Environment Var</a></li>
+              <li><a href="StringModules.htm">String Class</a></li>
+              <li><a href="WixApp.htm">WixApp</a></li>
+            </ul>
+          </li>
+          <li><a href="../../Pictures.htm">Pictures</a></li>
+          <li><a href="../../SacrilegiousProgGuide/index.htm">Prog Guide</a>
+            <ul id="ModulesDrop">
+              <li><a href="../../SacrilegiousProgGuide/Geography.htm">Screen and Page Geography and Code Layout</a></li>
+              <li><a href="../../SacrilegiousProgGuide/Naming.htm">Names and Naming Conventions</a></li>
+              <li><a href="../../SacrilegiousProgGuide/Abstraction.htm">Abstraction</a></li>
+              <li><a href="../../SacrilegiousProgGuide/SuccessFailure.htm">Null, Success and Failure</a></li>
+              <li><a href="../../SacrilegiousProgGuide/OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+              <li><a href="../../SacrilegiousProgGuide/HidingDetails.htm">Hiding Details</a></li>
+              <li><a href="../../SacrilegiousProgGuide/Expandable.htm">Expandable</a></li>
+              <li><a href="../../SacrilegiousProgGuide/qsort.htm">qsort</a></li>
+              <li><a href="../../SacrilegiousProgGuide/Strings.htm">Strings</a></li>
+<!--
+             <li>Packages and/or Objects</li>
+             <li>Loops in Objects</li>
+             <li>Building Blocks</li>
+             <li>Vectors (Arrays)</li>
+-->
+            </ul>
+          </li>
+        </ul>
+      </div>
+        </hgroup>
+  </header>
+
+  <div class="sidebar1">
+    <nav>
+      <ul>
+        <li><a href="../../index.htm">Home</a></li>
+        <li><a href="../index.htm">Modules &amp; Projects</a></li>
+        <li><a href="index.htm">Coding Projects</a></li>
+          <ul id="Modules">
+            <li><a href="../DataBaseProjs/CodeGen.htm">CodeGen</a></li>
+            <li><a href="../../SacrilegiousProgGuide/Expandable.htm">Expandable</a></li>
+            <li><a href="GitPrepProject.htm">GitPrep</a></li>
+            <li><a href="Library.htm">Library</a></li>
+            <li><a href="MakeApp.htm">MakeApp</a></li>
+            <li><a href="../../SacrilegiousProgGuide/Strings.htm">Strings</a></li>
+            <li><a href="WixApp.htm">WixApp</a></li>
+          </ul><br>
+
+        <li><a href="../DataBaseProjs/index.htm">Data Base Projects</a></a></li>
+          <ul id="Modules">
+          <li><a href="../DataBaseProjs/CodeGen.htm">CodeGen</a></li>
+          <li><a href="../SJRACESProjs/RACESContacts.htm">RACES-Contacts</a></li>
+          <li><a href="../SJRACESProjs/RWracesDB.htm">RWracesDB</a></li>
+          </ul><br>
+
+        <li><a href="../PersonalProjs/index.htm">Personal Projects</a></a></li>
+          <ul id="Modules">
+<!--          <li>Address Book</li>
+          <li>BkGd</li>
+-->
+          <li><a href="../PersonalProjs/KeePass.htm">KeePassLastPass</a></li>
+<!--      <li>Media</li>   -->
+          <li><a href="../PersonalProjs/MvMp3.htm">MvMp3</a></li>
+          <li><a href="../PersonalProjs/PrntProgramAndWix.htm">Print Program</a></li>
+<!--      <li>Read</li>
+          <li>Secure FTP</li>
+-->
+        </ul><br>
+
+        <li><a href="../SJRACESProjs/index.htm">SJ RACES Projects</a></a></li>
+          <ul id="Modules">
+<!--      <li>ICS-211a</li>
+          <li>ICS-214a</li>
+-->
+          <li><a href="../SJRACESProjs/PreOutpost.htm">PreOutpost</a></li>
+          <li><a href="../SJRACESProjs/RACESContacts.htm">RACES-Contacts</a></li>
+          <li><a href="../SJRACESProjs/RACESdb.htm">RWracesDB</a></li>
+          </ul><br>
+
+        <li><a href="../../Pictures.htm">Pictures</a></li>
+        <li><a href="../../SacrilegiousProgGuide/index.htm">Programming Guide</a></li>
+        <li><a href="../../about.htm">About Bob</a></li>
+      </ul>
+    </nav>
+  </div><!-- end .sidebar1 -->
+
+  <article class="content"><!-- InstanceBeginEditable name="Content" -->
+<section>
+<h2><a href="https://github.com/rrvt/WixApp" target="_blank">
+WixApp -- A program That Prepares a Wix Source File
+</a></h2>
+
+<p>
+This project started as a way to remember how to construct a decent installer using Wix.
+The syntax of Wix is just bizarre enough that every 6 months or so when I need to create one
+I had to learn it all over again.  So WixApp was constructed to provide a simple method for
+constructing a Wix input file.  That is then compiled using Visual Studio in the normal way
+and an installer is created.
+</p>
+
+<p>
+Wix is a very complex product, WixApp is very simple.  There are only a few things that it can do:
+</p>
+
+<ul>
+<li>Accept files that need to be installed in Progarm Files (x86)</li>
+<li>Create Shortcuts (when requested) on the start menu and the desktop</li>
+<li>Create one or more directories as needed into which files are placed in Program Files</li>
+<li>It can create up to two levels of directories in Program Files and the Start Menu</li>
+<li>If requested it will append a path to the system path</li>
+<li>The version number may be retrieved from an executable for the installer to use during
+installation</li>
+<li>It will create an uninstaller that will remove all of the files and directories that it creates</li>
+</ul>
+
+<p>
+When WixApp starts it presents the following dialog box:
+<img src="../../Graphics/WixApp.jpg" width="894" height="822" alt="WixApp"><br/>
+One can start a new project, open an existing project, save all the files produced or just save
+the wxd file (the data that this application produces).  Save all files also produces a product.wxs
+file.
+</p>
+
+<p>
+There appears to be three sections to the dialog box, but in actuallity there are only two.
+The bottom (i.e. Feature) section has a subsection (i.e. Component).
+</p>
+
+<h2>Product Section</h2>
+<p>
+There are four edit boxes in the Product Section
+</p>
+<ul>
+<li>Product Name -- The name used for the wxd file</li>
+<li>Company Name -- The name of the entity producing the application</li>
+<li>Installer Name -- The main name of the msi file (i.e. &lt;Installer Name&gt;.msi</li>
+<li>Control Panel Icon -- Usually the icon found in the project resource directory for the 
+application
+</li>
+</ul><br/>
+
+<h2>Feature Section</h2>
+<p>
+A feature is a collection of files that share a common program files directory and start menu.  
+WixApp doesn't care why they share these directories (a start menu is a directory too).
+</p>
+<p>
+The Feature Name edit box is actually a drop down list.  Selecting New adds another name to the list.
+Once the name is defined, the names put in the other edit boxes are attached to the specific feature
+name.
+</p>
+<h2>Components</h2>
+<p>
+A Feature may contain multiple components which are specified in the Component Section.  Once
+a name is chosen for a component (using the New Button) the remaining edit boxes in the Component
+section are tied to the named component.  The attributes of a component are:
+</p>
+<ul>
+<li>Path -- The full path to the file</li>
+<li>In Start Menu -- file appears in the start menu when checked</li>
+<li>Desk Top -- Link placed on desktop when checked</li>
+<li>Version No -- Installer used version number in file when checked</li>
+<li>On Path -- File is placed on the Environment Variable Path</li>
+<li>Login Startup -- App is started when the user logs into the PC</li>
+<li>Win Version -- At the moment only Win7 is tested.  WinXP and Win2K were legacy choices.</li>
+<li>Icon -- Optionally specify an icon to use with this file.</li>
+</ul><br/>
+
+<p>
+Each component defined is kept in the Name drop down list.  To edit a component, just select the name
+and the attributes for that component will return to be edited.  Same thing happens for a Feature.
+If there are two or more features, just selecting the name of the feature from the list will produce
+the attributes of the feature and all the components of the feature.
+</p>
+
+<h2>Finishing</h2>
+<p>When all the features have been defined the "Save All Files" will produce the product.wxs file
+and the WixApp file: &lt;Product&nbsp;Name&gt;.wxd.  The next time changes need to be made to the 
+product.wxs file, the &lt;Product&nbsp;Name&gt;.wxd needs to be opened to edit the data used to produce the
+product.wxs file.
+</p>
+
+</section>
+  <!-- InstanceEndEditable --></article>
+  <!-- end .content -->
+
+  <footer>
+    <hr />
+    <div>
+      <a href="../../index.htm">Home</a>&nbsp;&nbsp;
+      <a href="../index.htm">Modules</a>&nbsp;&nbsp;
+      <a href="../../Pictures.htm">Pictures</a>
+      <a href="../../SacrilegiousProgGuide/index.htm">Prog Guide</a>
+    </div>
+    <div>eMail: romeo romeo victor tango alpha tango sam whiskey delta echo dot charlie oscar mike</a></div>
+    <div>Last modified:&nbsp; <!-- #BeginDate format:Am2 -->11/4/23<!-- #EndDate --></div>
+    <div align="center">Copyright SD&E.&nbsp; All rights reserved.</div>
+  </footer>
+  <!-- end .container -->
+</div></body>
+<!-- InstanceEnd --></html>

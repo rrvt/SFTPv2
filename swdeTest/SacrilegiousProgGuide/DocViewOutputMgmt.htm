@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html lang="en"><!-- InstanceBegin template="/Templates/pageGuide.dwt" codeOutsideHTMLIsLocked="false" --> 
+<head>
+
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Doc/View MMI Output Management</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+
+<link href="../stylesheet.css"    rel="stylesheet" />
+<link href="../Graphics/Icon.ico" rel="shortcut icon" />
+
+<!--[if lte IE 7]>
+<style>
+.content { margin-right: -1px; } /* this 1px negative margin can be placed on any of the columns in
+                                                                        this layout with the same corrective effect. */
+ul.nav a { zoom: 1; }                    /* the zoom property gives IE the hasLayout trigger it needs to correct
+                                                                        extra whiltespace between the links */
+</style>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript">
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+</script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <hgroup>
+      <a href="../index.htm" id="LogoLink"><img src="../Graphics/swdeLogo200.jpg" alt="Logo" /></a>
+      <div class="TitleBlock">
+        <a href="../index.htm">
+            <h1>Software Design &amp; Engineering</h1>
+            <h1>
+                    <!-- InstanceBeginEditable name="PageTitle" -->
+            Doc/View MMI Output Management
+          <!-- InstanceEndEditable -->
+          </h1>
+        </a>
+      </div>
+      <div class="TitleBlock" id="DropDown">
+        <ul>
+          <li><a href="../index.htm">Home</a></li>
+          <li><a href="../Modules/index.htm">Modules</a>
+            <ul id="ModulesDrop">
+              <li><a href="../Modules/PersonalProjs/KeePass.htm">KeePass/LastPass</a></li>
+              <li><a href="../Modules/CodingProjs/MyLibrary.htm">Library</a></li>
+              <li><a href="../Modules/PersonalProjs/MvMp3.htm">Move Mp3 Tracks</a></li>
+              <li><a href="../Modules/SJRACESProjs/PreOutpost.htm">PreOutpost</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm">Print Program (pp)</a></li>
+              <li><a href="../Modules/SJRACESProjs/RWracesDB.htm">Read/Write RACES DB</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm#SetEnv">Set Environment Var</a></li>
+              <li><a href="../Modules/CodingProjs/StringModules.htm">String Class</a></li>
+              <li><a href="../Modules/CodingProjs/WixApp.htm">WixApp</a></li>
+            </ul>
+          </li>
+          <li><a href="../Pictures.htm">Pictures</a></li>
+          <li><a href="index.htm">Prog Guide</a>
+            <ul id="ModulesDrop">
+              <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+              <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+              <li><a href="Abstraction.htm">Abstraction</a></li>
+              <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+              <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+              <li><a href="HidingDetails.htm">Hiding Details</a></li>
+              <li><a href="Expandable.htm">Expandable</a></li>
+              <li><a href="qsort.htm">qsort</a></li>
+              <li><a href="Strings.htm">Strings</a></li>
+<!--
+             <li>Packages and/or Objects</li>
+             <li>Loops in Objects</li>
+             <li>Building Blocks</li>
+             <li>Vectors (Arrays)</li>
+-->          
+            </ul>
+          </li>
+        </ul>
+      </div>
+        </hgroup>
+  </header>
+
+  <div class="sidebar1">
+    <nav>
+      <ul>
+        <li><a href="../index.htm">Home</a></li>
+        <li><a href="../Modules/index.htm">Modules &amp; Projects</a></li>
+        <ul id="Modules">
+        <li><a href="../Modules/CodingProjs/index.htm">Coding Projects</a></li>
+        <li><a href="../Modules/DataBaseProjs/index.htm">Data Base Projects</a></li>
+        <li><a href="../Modules/PersonalProjs/index.htm">Personal Projects</a></li>
+        <li><a href="../Modules/SJRACESProjs/index.htm">SJ RACES Projects</a></li>
+        </ul>
+        <li><a href="../Pictures.htm">Pictures</a></li>
+        <li><a href="index.htm">Programming Guide</a></li>
+          <ul id="Modules">
+            <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+            <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+            <li><a href="Abstraction.htm">Abstraction</a></li>
+            <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+            <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+            <li><a href="HidingDetails.htm">Hiding Details</a></li>
+            <li><a href="Expandable.htm">Expandable</a></li>
+            <li><a href="qsort.htm">qsort</a></li>
+            <li><a href="Strings.htm">Strings</a></li>
+<!--        <li>Packages and/or Objects</li>
+            <li>Vectors (Arrays)</li>
+            <li>Loops in Objects</li>
+            <li>Building Blocks</li>
+-->
+          </ul>
+        <li><a href="../about.htm">About Bob</a></li>
+      </ul>
+    </nav>
+  </div><!-- end .sidebar1 -->
+
+  <article class="content"><!-- InstanceBeginEditable name="Content" -->
+  <section>
+    <h2>Introduction</h2>
+    <p>
+    The MFC Doc/View base purports to separate the details of programming the data in the app from
+    the details of programming the man/machine output to the various devices (e.g. display and printers) 
+    in the app.  It does this by sending calls in a specific order to the app's View class.
+    </p>
+    <p>
+    Every app has very specific needs but they may differ among the applications one writes.  I finally
+    realized that I was reinventing the wheel everytime I started a new application.  So I created 
+    MakeApp, an application which will create a "starter" application.  When the app is first created  
+    it is ready to run with sample commands and code of various kinds already implemented.  A "#define"
+    controls some of the examples and other examples are just there to use as needed.
+    </p>
+    
+    <p>
+    Unlike the old c apps that start with main, MFC Doc/View apps start with a subclass of CWinAppEx.
+    Eventually during the initiation of the app, two additional objects are created, a doc object and a
+    view object.  They work together to all an app to function.		
+    </p>
+
+    <p>
+		It turned out that all apps need some things done in each MFC app opbject.  So I wrote CApp, CDoc 
+    and CScrView.  So the three project objects are subclasses of CApp, CDoc and CScrView.  CApp provides
+    an identity of the App to Windows, and pointers the doc, view and mainframe. CDoc provides features for
+    reading and writing to files including implementing a replacement for serialize. CScrView provides a
+    framework for managing the output to a display and printer.  CScrView is a subclass of CScrollView so 
+    CScrView also helps manage the window scroll bar. 
+    </p>
+        
+    <p>
+		Output to the window starts with an invalidate call to windows.  An invalidate may occur naturally, for example
+    when the size of the window changes, or explicitly when the app executes an invalidate call.  Then an OnPrepareDC
+    call is executed.  It contains pointers to a device context and a print info objects. After initialing things
+    and it returns then OnDraw is called.  OnDraw is responsible for "drawing" on the window.
+    </p>
+  </section>
+  <!-- InstanceEndEditable --></article>
+  <!-- end .content -->
+
+  <footer>
+    <hr />
+    <div>
+      <a href="../index.htm">Home</a>&nbsp;&nbsp;
+      <a href="../Modules/index.htm">Modules</a>&nbsp;&nbsp;
+      <a href="../Pictures.htm">Pictures</a>
+      <a href="index.htm">Prog Guide</a>
+    </div>
+    <div>eMail: romeo romeo victor tango alpha tango sam whiskey delta echo dot charlie oscar mike</a></div>
+    <div>Last modified:&nbsp; <!-- #BeginDate format:Am2 -->8/3/24<!-- #EndDate --></div>
+    <div align="center">Copyright SD&E.&nbsp; All rights reserved.</div>
+  </footer>
+  <!-- end .container -->
+</div></body>
+<!-- InstanceEnd --></html>

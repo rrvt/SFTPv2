@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html lang="en"><!-- InstanceBegin template="/Templates/pageGuide.dwt" codeOutsideHTMLIsLocked="false" --> 
+<head>
+
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Names and Naming Conventions</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+
+<link href="../stylesheet.css"    rel="stylesheet" />
+<link href="../Graphics/Icon.ico" rel="shortcut icon" />
+
+<!--[if lte IE 7]>
+<style>
+.content { margin-right: -1px; } /* this 1px negative margin can be placed on any of the columns in
+                                                                        this layout with the same corrective effect. */
+ul.nav a { zoom: 1; }                    /* the zoom property gives IE the hasLayout trigger it needs to correct
+                                                                        extra whiltespace between the links */
+</style>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript">
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+</script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <hgroup>
+      <a href="../index.htm" id="LogoLink"><img src="../Graphics/swdeLogo200.jpg" alt="Logo" /></a>
+      <div class="TitleBlock">
+        <a href="../index.htm">
+            <h1>Software Design &amp; Engineering</h1>
+            <h1>
+                    <!-- InstanceBeginEditable name="PageTitle" -->
+            Names and Naming Conventions
+          <!-- InstanceEndEditable -->
+          </h1>
+        </a>
+      </div>
+      <div class="TitleBlock" id="DropDown">
+        <ul>
+          <li><a href="../index.htm">Home</a></li>
+          <li><a href="../Modules/index.htm">Modules</a>
+            <ul id="ModulesDrop">
+              <li><a href="../Modules/PersonalProjs/KeePass.htm">KeePass/LastPass</a></li>
+              <li><a href="../Modules/CodingProjs/MyLibrary.htm">Library</a></li>
+              <li><a href="../Modules/PersonalProjs/MvMp3.htm">Move Mp3 Tracks</a></li>
+              <li><a href="../Modules/SJRACESProjs/PreOutpost.htm">PreOutpost</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm">Print Program (pp)</a></li>
+              <li><a href="../Modules/SJRACESProjs/RWracesDB.htm">Read/Write RACES DB</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm#SetEnv">Set Environment Var</a></li>
+              <li><a href="../Modules/CodingProjs/StringModules.htm">String Class</a></li>
+              <li><a href="../Modules/CodingProjs/WixApp.htm">WixApp</a></li>
+            </ul>
+          </li>
+          <li><a href="../Pictures.htm">Pictures</a></li>
+          <li><a href="index.htm">Prog Guide</a>
+            <ul id="ModulesDrop">
+              <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+              <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+              <li><a href="Abstraction.htm">Abstraction</a></li>
+              <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+              <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+              <li><a href="HidingDetails.htm">Hiding Details</a></li>
+              <li><a href="Expandable.htm">Expandable</a></li>
+              <li><a href="qsort.htm">qsort</a></li>
+              <li><a href="Strings.htm">Strings</a></li>
+<!--
+             <li>Packages and/or Objects</li>
+             <li>Loops in Objects</li>
+             <li>Building Blocks</li>
+             <li>Vectors (Arrays)</li>
+-->          
+            </ul>
+          </li>
+        </ul>
+      </div>
+        </hgroup>
+  </header>
+
+  <div class="sidebar1">
+    <nav>
+      <ul>
+        <li><a href="../index.htm">Home</a></li>
+        <li><a href="../Modules/index.htm">Modules &amp; Projects</a></li>
+        <ul id="Modules">
+        <li><a href="../Modules/CodingProjs/index.htm">Coding Projects</a></li>
+        <li><a href="../Modules/DataBaseProjs/index.htm">Data Base Projects</a></li>
+        <li><a href="../Modules/PersonalProjs/index.htm">Personal Projects</a></li>
+        <li><a href="../Modules/SJRACESProjs/index.htm">SJ RACES Projects</a></li>
+        </ul>
+        <li><a href="../Pictures.htm">Pictures</a></li>
+        <li><a href="index.htm">Programming Guide</a></li>
+          <ul id="Modules">
+            <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+            <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+            <li><a href="Abstraction.htm">Abstraction</a></li>
+            <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+            <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+            <li><a href="HidingDetails.htm">Hiding Details</a></li>
+            <li><a href="Expandable.htm">Expandable</a></li>
+            <li><a href="qsort.htm">qsort</a></li>
+            <li><a href="Strings.htm">Strings</a></li>
+<!--        <li>Packages and/or Objects</li>
+            <li>Vectors (Arrays)</li>
+            <li>Loops in Objects</li>
+            <li>Building Blocks</li>
+-->
+          </ul>
+        <li><a href="../about.htm">About Bob</a></li>
+      </ul>
+    </nav>
+  </div><!-- end .sidebar1 -->
+
+  <article class="content"><!-- InstanceBeginEditable name="Content" -->
+  <section>
+    <h2>Naming Conventions</h2>
+        <h3>Hungarian notation</h3>
+    <p>
+        A brilliant programmer at Microsoft, Charles Simonyi, more or less invented the Hungarian Notation.
+    The idea probably was oriented around the idea that a name had to carry additional information such as
+    type of variable, size of variable, how it might be used.  I've never favored this notation as it seemed
+    to me to get in the way of reading each statment.    It also tends to lengthen the names.
+    </p>
+    <h3>Names</h3>
+    <p>
+        So things should be nouns.  Actions should be verbs.  Attributes could be adjectives or nouns.
+    I grew up in this business when name had restricted
+    lengths by virtue of the programming language.  So short names were required.  This led to the map
+    method of converting long names to short names.  If I recall it correctly the map method takes a
+    long name and removes characters
+    from the end first and removes vowels before consonants. We used that for years to make almost readable
+    names from longer spellings.
+    </p>
+    <p>
+    Now I've noticed that names can be any reasonable length, some 50 characters long to spell out some
+    complicated information.  Yuk.  I want to use the line to convey some useful information about what is
+    going on (which is usually not carried in a single name).  So less abbreviation but still meaningful names
+    that are not too long.
+    </p>
+    
+    <h3>One Rule for Names</h3>
+    <p>
+    Ok, I do have one sort of rule, suggestion, leaning... 
+    In multiple word names that define something (abbreviated or not) each word (or abbreviation) is Capitalized
+    (e.g. MyClass).   
+    Names that define something are capitalized.       
+    Class names are capitalized.  Typedefs are capitalized.  Static constants are capitalized.  
+    Things that are objects or variables, i.e. single things, are not capitalized (e.g. myClass).
+    Here are some examples:
+    </p>
+    
+<blockquote>
+class MyClass;<br/>
+typedef IterT&lt;MyClass, MyDatum&gt; MCIter;&nbsp;&nbsp;&nbsp;&nbsp;// defines something --Capitalized<br/>
+<br/>
+class MyClass {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// class -- Capitalizaed<br/>
+&nbsp;&nbsp;o o o<br/>
+&nbsp;&nbsp;};<br/><br/>      
+    
+static MyKeyString TCchar* = _T("KeyString");&nbsp;&nbsp;&nbsp;// static object -- Capitalized<br/><br/>
+MyClass&nbsp;myClass;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// object -- not capitalized<br/>
+MCIter&nbsp;&nbsp;iter(MyClass);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// not capitalized<br/>
+<br/> 
+
+// In the middle of a function somewhere:<br/><br/>
+&nbsp;&nbsp;iniFile.write(Section, MyKeyString, _T("Data sent to AppName.ini file"));<br/> 
+
+</blockquote>
+    
+    <h3>Names Within Functions</h3>
+    <p>
+        Since a function is all visible in the editor, the quality of the name is less important.  So here are
+    some conventions for intermediate variables used temporarily:
+    </p>
+    <ul>
+        <li>i, j, k -- array indexes, usually integers (i.e. int) but could be a larger version</li>
+        <li>p, q, r -- pointers to something spelled out in the list of local variables</li>
+        <li>s, stg, t, cs -- strings s and t are my String class and cs is either CString or Cstring</li>
+        <li>ch, tch -- a single character, an UniCode character</li>
+    </ul>
+    <p>
+        Other variables in functions are given names and appear in the list of local varialbes right after
+    the function definition.
+    </p>
+    <h3>Names in Classes</h3>
+    <p>
+        Tough topic and I'll return to that when I talk about classes, objects and Objected Oriented Programming
+    (a highfalutin title if I ever heard one).
+    But I grew up developing packages (files with a single purpose) back before Ada and OOP came along.
+    I don't build compilcated classes (for the most part) now but I think of them as Objects instead
+    of packages.
+    </p>
+    <p>
+        Classes define things or multi-part procedures so the names of Classes should reflect to kind of
+    thing it defines.  I don't know how to define how I come up with names but I can tell you that sometimes
+    I start with one name and over time as I learn more about the class and what it should be doing for
+    the program I rename it and also rename some of its internal functions (methods in OOP speak).
+    </p>
+    <p>
+        Mostly classes define some primitive data structure to be some higher form of existance in the program.
+    So the names given to the elements reflect the nature of an operation on the data or some attribute of
+    the data.  In some cases the name allows a restricted view of the actual data (with or without the
+    ability to change the data).  I have some pet names for some of the operations, attributes and viewing
+    functions that I'll talk about later.
+    </p>
+  </section>
+  <!-- InstanceEndEditable --></article>
+  <!-- end .content -->
+
+  <footer>
+    <hr />
+    <div>
+      <a href="../index.htm">Home</a>&nbsp;&nbsp;
+      <a href="../Modules/index.htm">Modules</a>&nbsp;&nbsp;
+      <a href="../Pictures.htm">Pictures</a>
+      <a href="index.htm">Prog Guide</a>
+    </div>
+    <div>eMail: romeo romeo victor tango alpha tango sam whiskey delta echo dot charlie oscar mike</a></div>
+    <div>Last modified:&nbsp; <!-- #BeginDate format:Am2 -->7/29/24<!-- #EndDate --></div>
+    <div align="center">Copyright SD&E.&nbsp; All rights reserved.</div>
+  </footer>
+  <!-- end .container -->
+</div></body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html lang="en"><!-- InstanceBegin template="/Templates/pageGuide.dwt" codeOutsideHTMLIsLocked="false" --> 
+<head>
+
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Loops in Objects</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+
+<link href="../stylesheet.css"    rel="stylesheet" />
+<link href="../Graphics/Icon.ico" rel="shortcut icon" />
+
+<!--[if lte IE 7]>
+<style>
+.content { margin-right: -1px; } /* this 1px negative margin can be placed on any of the columns in
+                                                                        this layout with the same corrective effect. */
+ul.nav a { zoom: 1; }                    /* the zoom property gives IE the hasLayout trigger it needs to correct
+                                                                        extra whiltespace between the links */
+</style>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript">
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+</script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <hgroup>
+      <a href="../index.htm" id="LogoLink"><img src="../Graphics/swdeLogo200.jpg" alt="Logo" /></a>
+      <div class="TitleBlock">
+        <a href="../index.htm">
+            <h1>Software Design &amp; Engineering</h1>
+            <h1>
+                    <!-- InstanceBeginEditable name="PageTitle" -->
+            Loops In Objects
+          <!-- InstanceEndEditable -->
+          </h1>
+        </a>
+      </div>
+      <div class="TitleBlock" id="DropDown">
+        <ul>
+          <li><a href="../index.htm">Home</a></li>
+          <li><a href="../Modules/index.htm">Modules</a>
+            <ul id="ModulesDrop">
+              <li><a href="../Modules/PersonalProjs/KeePass.htm">KeePass/LastPass</a></li>
+              <li><a href="../Modules/CodingProjs/MyLibrary.htm">Library</a></li>
+              <li><a href="../Modules/PersonalProjs/MvMp3.htm">Move Mp3 Tracks</a></li>
+              <li><a href="../Modules/SJRACESProjs/PreOutpost.htm">PreOutpost</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm">Print Program (pp)</a></li>
+              <li><a href="../Modules/SJRACESProjs/RWracesDB.htm">Read/Write RACES DB</a></li>
+              <li><a href="../Modules/PersonalProjs/PrntProgramAndWix.htm#SetEnv">Set Environment Var</a></li>
+              <li><a href="../Modules/CodingProjs/StringModules.htm">String Class</a></li>
+              <li><a href="../Modules/CodingProjs/WixApp.htm">WixApp</a></li>
+            </ul>
+          </li>
+          <li><a href="../Pictures.htm">Pictures</a></li>
+          <li><a href="index.htm">Prog Guide</a>
+            <ul id="ModulesDrop">
+              <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+              <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+              <li><a href="Abstraction.htm">Abstraction</a></li>
+              <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+              <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+              <li><a href="HidingDetails.htm">Hiding Details</a></li>
+              <li><a href="Expandable.htm">Expandable</a></li>
+              <li><a href="qsort.htm">qsort</a></li>
+              <li><a href="Strings.htm">Strings</a></li>
+<!--
+             <li>Packages and/or Objects</li>
+             <li>Loops in Objects</li>
+             <li>Building Blocks</li>
+             <li>Vectors (Arrays)</li>
+-->          
+            </ul>
+          </li>
+        </ul>
+      </div>
+        </hgroup>
+  </header>
+
+  <div class="sidebar1">
+    <nav>
+      <ul>
+        <li><a href="../index.htm">Home</a></li>
+        <li><a href="../Modules/index.htm">Modules &amp; Projects</a></li>
+        <ul id="Modules">
+        <li><a href="../Modules/CodingProjs/index.htm">Coding Projects</a></li>
+        <li><a href="../Modules/DataBaseProjs/index.htm">Data Base Projects</a></li>
+        <li><a href="../Modules/PersonalProjs/index.htm">Personal Projects</a></li>
+        <li><a href="../Modules/SJRACESProjs/index.htm">SJ RACES Projects</a></li>
+        </ul>
+        <li><a href="../Pictures.htm">Pictures</a></li>
+        <li><a href="index.htm">Programming Guide</a></li>
+          <ul id="Modules">
+            <li><a href="Geography.htm">Screen and Page Geography and Code Layout</a></li>
+            <li><a href="Naming.htm">Names and Naming Conventions</a></li>
+            <li><a href="Abstraction.htm">Abstraction</a></li>
+            <li><a href="SuccessFailure.htm">Null, Success and Failure</a></li>
+            <li><a href="OneEntry.htm">One Entry, One Exit (Structured Programming)</a></li>
+            <li><a href="HidingDetails.htm">Hiding Details</a></li>
+            <li><a href="Expandable.htm">Expandable</a></li>
+            <li><a href="qsort.htm">qsort</a></li>
+            <li><a href="Strings.htm">Strings</a></li>
+<!--        <li>Packages and/or Objects</li>
+            <li>Vectors (Arrays)</li>
+            <li>Loops in Objects</li>
+            <li>Building Blocks</li>
+-->
+          </ul>
+        <li><a href="../about.htm">About Bob</a></li>
+      </ul>
+    </nav>
+  </div><!-- end .sidebar1 -->
+
+  <article class="content"><!-- InstanceBeginEditable name="Content" -->
+  <section>
+    <h2>Introduction</h2>
+    <p>
+    The classic definition of a loop is that it presents the contents of some data structure for 
+    some sort of processing, one element at a time.
+    The common definition is that it starts at the beginning of the data structure and preceeds one element 
+    at a time to the end of the data structure.  The data structure may be an array (vector), linked list,
+    hash table, tree, or some other database structure that is undefined outside of the object itself.
+    </p>
+    <p>
+		Since the data structure is for all practical purposes unknown when it is enclosed in a class the 
+    developer of the class should provide a way to loop over the contents.  So if that is the case,
+    then it is useful to standardize on a simple way to create those loops.  Here is what I have
+    settled on for forming loops:
+    </p>
+    <blockquote>
+    MyIter iter(myObject);<br/>
+    Datum* datum;<br/><br/>
+		&nbsp;&nbsp;for (datum = iter(); datum; datum = iter++) { ooo }<br/>
+    </blockquote>
+    
+    <p>
+    By the construction of the loop, the value of datum, a pointer to an object in the data structure in 
+    myObject, is either a valid object or it is zero.  Thus when datum is processed in the body of the
+    loop it is guaranteed to be valid object.
+    </p>
+    <p>
+		MyIter is a class that knows a great deal about the MyObject class which defines the object, myObject.  
+    MyIter must be a friend of MyObject and since it is a friend it can "see" some private functions in
+    MyObject.  The private functions can provide the information needed for MyIter to loop over the data
+    structure.
+    </p>
+    <p>
+		The best way to organize MyIter is to touch the data in the myObject object.  MyIter should just retain
+    any information it needs to loop over the data in myObject.  Thus two or more MyIter objects may exist
+    at the same time.  This is an advantage and a disadvantage.
+    </p>
+    <p>
+		Suppose the data cannot be sorted but we need to determine if two nodes are somehow related and we need
+    to find that out.  One method would be to sort the array on using the relationship attributes for the sort
+    key.  But that is out.  So another method would be to loop over the data in one function.  As each node
+    is processed the current node and the iterator is copied into another function.  The second function uses 
+    the iterator copy
+    to examine the remaining nodes in the data structure for a related node.  Neither function knows how the
+    iterator works or what kind of data structure is in play.
+    </p>
+    <p>
+    The downside of this kind of looping class is that two functions in different threads (processes) operating independently 
+    can get into trouble adding and deleting nodes.  Then the best solution is to lock the objects while the
+    two different functions in different threads (processes) perform their loops.
+    </p>
+    <p>
+		Examples are always good.  Suppose we have an array in MyObject:
+    </p>
+    <blockquote>
+		  class MyObject {<br>
+		  int&nbsp;&nbsp;&nbsp;nItems;<br/>
+      Datum data[DataSize];<br/>
+      <br/>
+      public:<br/><br/>
+      &nbsp;&nbsp;MyObject() : nItems(0) { }<br/>
+      &nbsp;&nbsp;o o o<br/>
+      &nbsp;&nbsp;}<br/>
+		      
+    </blockquote>
+    <p>
+		What does an interator need?  An index variable in this case.  It also needs to know the location of the object, i.e. its name.
+    It also needs definitions for the function and "++" operators.
+    </p>
+		
+    <blockquote>
+		class MyIter {<br/>
+    MyObject&&nbsp;obj;<br>
+    int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i;<br/><br>
+    public:<br><br>
+    MyIter(MyObject& myObject) : obj(myObject), i(0) { }<br><br>
+    Datum* operator() ()&nbsp;&nbsp;&nbsp;&nbsp;{ ooo }<br>
+    Datum* operator++&nbsp;(int)&nbsp;{ ooo }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// By the way, the int is just a c++ thing<br>
+    <br>
+    private:<br><br>
+		&nbsp;&nbsp;MyIter() : obj(*(MyObject*)0) { }&nbsp;&nbsp;&nbsp;// Prevents MyIter not being initialized properly<br>
+    &nbsp;&nbsp;}<br>    
+    </blockquote>
+    
+    <p>
+		Clearly we have to rely on the MyObject class to supply information about the data structure.  Since this is
+    an array we need to know how many elements are occupied in the array.  We also need to know how to get the data
+    from the array.  Let's add the functions and friend declaration to MyObject.
+    </p>
+    <blockquote>
+		class MyObject {<br/>
+    int&nbsp;&nbsp;&nbsp;nItems;<br/>
+    Datum data[DataSize];<br/>
+    <br/>
+    public:<br/><br/>
+		&nbsp;&nbsp;MyObject() : nItems(0) { }<br/><br>
+    &nbsp;&nbsp;bool add(Datum& dtm)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{if (nItems >= DataSize) return false;   data[nItems++] = dtm;   return true;}<br>
+    &nbsp;&nbsp;o o o<br/><br>
+    private:<br><br>
+    &nbsp;&nbsp;Datum* datum(int i) { ooo }<br>
+    &nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;nData()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ ooo }<br><br>
+    &nbsp;&nbsp;friend class MyIter;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// or friend typename MyIter if MyIter is a typedef<br>
+
+    &nbsp;&nbsp;}<br/>  
+    </blockquote>
+    
+    <p>
+    The function datum(int i) must protect the data array.  In this case it must test for both ends of the array:
+    </p>
+    <blockquote>
+		&nbsp;&nbsp;Datum* datum(int i) {return 0 <= i && i < nData() ? &data[i] : 0;}<br>
+    &nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;nData() &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{return nItems;}<br>
+    </blockquote>
+    
+    <p>
+		This example does not need an initialization function, some do.  So given that here are the two functions
+     needed to be defined in MyIter:
+    </p>
+    <blockquote>
+    Datum* operator() ()&nbsp;&nbsp;&nbsp;&nbsp;{i = 0; return obj.datum(i);}<br>
+    Datum* operator++&nbsp;(int)&nbsp;{return obj.datum(++i);}<br>    
+    </blockquote>
+    <p>
+		Implementations will vary depending on the data structure.  The goal is to always have the following 
+    loop where the body of the loop may be anything that needs a pointer to a datum:
+    </p>
+    <blockquote>
+    Datum* find(Key key) {<br>
+    MyIter iter(myObject);<br/>
+    Datum* datum;<br/><br/>
+		&nbsp;&nbsp;for (datum = iter(); datum; datum = iter++) {if (datum->key == key) return datum;}<br/>
+    &nbsp;&nbsp;return 0;<br>
+    &nbsp;&nbsp;}
+    </blockquote>
+  </section>
+  <!-- InstanceEndEditable --></article>
+  <!-- end .content -->
+
+  <footer>
+    <hr />
+    <div>
+      <a href="../index.htm">Home</a>&nbsp;&nbsp;
+      <a href="../Modules/index.htm">Modules</a>&nbsp;&nbsp;
+      <a href="../Pictures.htm">Pictures</a>
+      <a href="index.htm">Prog Guide</a>
+    </div>
+    <div>eMail: romeo romeo victor tango alpha tango sam whiskey delta echo dot charlie oscar mike</a></div>
+    <div>Last modified:&nbsp; <!-- #BeginDate format:Am2 -->7/30/24<!-- #EndDate --></div>
+    <div align="center">Copyright SD&E.&nbsp; All rights reserved.</div>
+  </footer>
+  <!-- end .container -->
+</div></body>
+<!-- InstanceEnd --></html>
