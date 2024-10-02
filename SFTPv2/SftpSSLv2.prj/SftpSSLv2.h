@@ -64,6 +64,9 @@ public:
   void close();                                           // Close SftpSSL
 
   void openSSLThreadStop();
+
+  String& firstResp();
+  String& lastResp();
   };
 
 

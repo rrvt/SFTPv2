@@ -7,40 +7,40 @@
 
 class CSVLex;
 class CSVOut;
-class Archive;
+class Archive;                        // MkLclDirOp,   MkRmtDirOp,
+                                      // MkLclDirdone, MkRmtDirDone,
 
-
-enum   UnitOp  {NilOp,  PutOp,   GetOp,   MkLclDirOp,   MkRmtDirOp,   DelOp,   DelDirOp,
-                        PutDone, GetDone, MkLclDirdone, MkRmtDirDone, DelDone, DelDirDone};
+enum   UnitOp  {NilOp,  PutOp,   GetOp,   DelOp,   DelDirOp,
+                        PutDone, GetDone, DelDone, DelDirDone};
 
 class UnitKey {
 public:
 bool   dir;
 String path;
 
-  UnitKey() : dir(false) { }
-  UnitKey(TCchar* pth)  {dir = false; path = pth;}
-  UnitKey(String& s)    {dir = false; path = s;}
-  UnitKey(UnitKey& key) {copy(key);}
+           UnitKey() : dir(false) { }
+           UnitKey(TCchar* pth)  {dir = false; path = pth;}
+           UnitKey(String& s)    {dir = false; path = s;}
+           UnitKey(UnitKey& key) {copy(key);}
 
-  void clear() {dir = false; path.clear();}
+  void     clear() {dir = false; path.clear();}
 
   UnitKey& operator- (String& s)   {dir = false;   path = s;    return *this;}
   UnitKey& operator- (TCchar* pth) {dir = false;   path = pth;  return *this;}
 
   UnitKey& operator= (UnitKey& key) {copy(key); return *this;}
 
-  bool         operator== (UnitKey& k);
-  bool         operator!= (UnitKey& k);
-  bool         operator<  (UnitKey& k);
-  bool         operator<= (UnitKey& k);
+  bool     operator== (UnitKey& k);
+  bool     operator!= (UnitKey& k);
+  bool     operator<  (UnitKey& k);
+  bool     operator<= (UnitKey& k);
 
-  bool         operator>  (UnitKey& k);
-  bool         operator>= (UnitKey& k);
+  bool     operator>  (UnitKey& k);
+  bool     operator>= (UnitKey& k);
 
 private:
 
-  void copy(UnitKey& key) {dir = key.dir;   path = key.path;}
+  void     copy(UnitKey& key) {dir = key.dir;   path = key.path;}
   };
 
 
@@ -55,17 +55,53 @@ Date    date;
 
 UnitOp  unitOp;
 
-  UnitDsc() : key(), size(0), date(Date::MinDate), unitOp(NilOp) { }
-  UnitDsc(UnitDsc& siteFile) {copy(siteFile);}                            // copy data
- ~UnitDsc() { }
+           UnitDsc() : key(), size(0), date(Date::MinDate), unitOp(NilOp) { }
+           UnitDsc(UnitDsc& siteFile) {copy(siteFile);}
+          ~UnitDsc() { }
 
- void   clrOp() {unitOp = NilOp;}
+ void      clrOp() {unitOp = NilOp;}
 
   UnitDsc& operator= (UnitDsc& siteFile) {copy(siteFile); return *this;}
 
-  bool   load(CSVLex& lex);
-  void   save(CSVOut& csvOut);
+  void     set(TCchar* relPath, bool dir, UnitOp op);
+  String&  normalize(TCchar* relPath);
 
+  bool     load(CSVLex& lex);
+  void     save(CSVOut& csvOut);
+  void     display();
+
+  // Allows sorted data
+
+  bool     operator== (UnitDsc& dsc) {return key == dsc.key;}
+  bool     operator!= (UnitDsc& dsc) {return key != dsc.key;}
+
+  bool     operator>  (UnitDsc& dsc) {return key >  dsc.key;}
+  bool     operator>= (UnitDsc& dsc) {return key >= dsc.key;}
+  bool     operator<  (UnitDsc& dsc) {return key <  dsc.key;}
+  bool     operator<= (UnitDsc& dsc) {return key <= dsc.key;}
+
+  bool     operator<  (UnitKey& s);             // Required for Binary Search
+  bool     operator<= (UnitKey& s);             // Required for Binary Search
+  bool     operator== (UnitKey& s);
+  bool     operator!= (UnitKey& s);
+  bool     operator>  (UnitKey& s);
+  bool     operator>= (UnitKey& s);
+
+private:
+
+  void copy(UnitDsc& ud) {
+    name  = ud.name;    key    = ud.key;      size  = ud.size;
+    date  = ud.date;    unitOp = ud.unitOp;
+    }
+  };
+
+
+//-------------------
+
+//bool   load(CSVLex& lex);
+
+//  void   addLclAttr(TCchar* path);
+#if 0
   bool   put(           int& noFiles);
   bool   createWebDir(  int& noFiles);
   bool   get(           int& noFiles);
@@ -73,38 +109,6 @@ UnitOp  unitOp;
   bool   del(           int& noFiles);
   bool   removeDir(     int& noFiles);
 
-  void   display();
   void   log();
-
-  // Allows sorted data
-  bool   operator== (UnitDsc& dsc) {return key == dsc.key;}
-  bool   operator!= (UnitDsc& dsc) {return key != dsc.key;}
-
-  bool   operator>  (UnitDsc& dsc) {return key >  dsc.key;}
-  bool   operator>= (UnitDsc& dsc) {return key >= dsc.key;}
-  bool   operator<  (UnitDsc& dsc) {return key <  dsc.key;}
-  bool   operator<= (UnitDsc& dsc) {return key <= dsc.key;}
-
-  bool   operator<  (UnitKey& s);             // Required for Binary Search
-  bool   operator<= (UnitKey& s);             // Required for Binary Search
-  bool   operator== (UnitKey& s);
-  bool   operator!= (UnitKey& s);
-  bool   operator>  (UnitKey& s);
-  bool   operator>= (UnitKey& s);
-
-private:
-
-  void copy(UnitDsc& siteFile) {
-    name   = siteFile.name;    key   = siteFile.key;
-    size   = siteFile.size;    date  = siteFile.date;
-    unitOp = siteFile.unitOp;
-    }
-  };
-
-
-
-
-//bool   load(CSVLex& lex);
-
-//  void   addLclAttr(TCchar* path);
+#endif
 

@@ -1,0 +1,92 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+  Version="10.0"
+  VendorName="SlickEdit"
+  TemplateName="Microsoft Visual Studio 2022 C++"
+  WorkingDir="."
+  AssociatedFile="OpenSSL.3.1.2.vcxproj"
+  AssociatedFileType="microsoft visual studio visual c++">
+  <Config
+    Name="Debug|Win32"
+    Type="vcproj"
+    DebugCallbackName="windbg"
+    OutputFile=""
+    CompilerConfigName="Visual Studio 2022"
+    Defines='"/Dtcc= WinBuild "%bn" "%rp" static"'>
+    <Includes>
+      <Include Dir="%(INCLUDE)"/>
+    </Includes>
+    <Menu>
+      <Target
+        Name="Build Solution"
+        MenuCaption="Build Solution"
+        CaptureOutputWith="ProcessBuffer"
+        SaveOption="SaveAll"
+        RunFromDir="%rw"
+        ClearProcessBuffer="1">
+        <Exec CmdLine='tcc  WinBuild %bn "%rw" static'/>
+      </Target>
+      <Target
+        Name="Clean Solution"
+        MenuCaption="Clean Solution"
+        CaptureOutputWith="ProcessBuffer"
+        SaveOption="SaveAll"
+        RunFromDir="%rw"
+        ClearProcessBuffer="1">
+        <Exec CmdLine='msbuild "%w" /t:"Clean" /p:Configuration="%bn" /p:Platform="%bp" /nologo /v:m'/>
+      </Target>
+      <Target
+        Name="Make"
+        MenuCaption="Make"
+        CaptureOutputWith="ProcessBuffer"
+        SaveOption="SaveAll"
+        RunFromDir="%rw"
+        ClearProcessBuffer="1">
+        <Exec CmdLine="tcc WinMake"/>
+      </Target>
+    </Menu>
+  </Config>
+  <Config
+    Name="Release|Win32"
+    Type="vcproj"
+    DebugCallbackName="windbg"
+    OutputFile=""
+    CompilerConfigName="Visual Studio 2022"
+    Defines='"/Dtcc= WinBuild "%bn" "%rp" static"'>
+    <Includes>
+      <Include Dir="%(INCLUDE)"/>
+    </Includes>
+    <Menu>
+      <Target
+        Name="Build Solution"
+        MenuCaption="Build Solution"
+        CaptureOutputWith="ProcessBuffer"
+        SaveOption="SaveAll"
+        RunFromDir="%rw"
+        ClearProcessBuffer="1">
+        <Exec CmdLine='tcc  WinBuild %bn "%rw" static'/>
+      </Target>
+      <Target
+        Name="Clean Solution"
+        MenuCaption="Clean Solution"
+        CaptureOutputWith="ProcessBuffer"
+        SaveOption="SaveAll"
+        RunFromDir="%rw"
+        ClearProcessBuffer="1">
+        <Exec CmdLine='msbuild "%w" /t:"Clean" /p:Configuration="%bn" /p:Platform="%bp" /nologo /v:m'/>
+      </Target>
+      <Target
+        Name="Make"
+        MenuCaption="Make"
+        CaptureOutputWith="ProcessBuffer"
+        SaveOption="SaveAll"
+        RunFromDir="%rw"
+        ClearProcessBuffer="1">
+        <Exec CmdLine="tcc WinMake"/>
+      </Target>
+    </Menu>
+  </Config>
+  <Files></Files>
+  <List Name="RTE">
+  </List>
+</Project>

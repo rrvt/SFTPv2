@@ -17,9 +17,9 @@
 #include "WorkerThrd.h"
 
 
-volatile UnitDsc* Site::lastDsc;
+//volatile UnitDsc* Site::lastDsc;
 
-static UINT updateThrd(void* param);            // Thread for processing an update
+static UINT updateThrd(   void* param);             // Thread for processing an update
 
 TCchar* GlobalSect  = _T("Global");
 TCchar* LastSiteKey = _T("LastSite");
@@ -115,8 +115,6 @@ int noFiles;
 
   notePad << _T("Update Files") << nCrlf << nCrlf;
 
-//  display();   return;
-
   mainFrm()->startPrgBar(updateList.nData());
 
   workerThrd.start(updateThrd, (void*) &updateList, ID_UpdateMsg);
@@ -151,17 +149,13 @@ String       rslt;
 
 void Site::performOp(UnitDsc* dsc) {
 
-  lastDsc = dsc;
-
   switch (dsc->unitOp) {
 
     case NilOp      : break;
-    case PutOp      : put(*dsc);      lastDsc->unitOp = PutDone;      break;
-    case GetOp      : get(*dsc);      lastDsc->unitOp = GetDone;      break;
-    case DelOp      : del(*dsc);      lastDsc->unitOp = DelDone;      break;
-    case DelDirOp   : delDir(*dsc);   lastDsc->unitOp = DelDirDone;   break;
-    case MkLclDirOp : break;
-    case MkRmtDirOp : break;
+    case PutOp      : put(*dsc);      break;
+    case GetOp      : get(*dsc);      break;
+    case DelOp      : del(*dsc);      break;
+    case DelDirOp   : delDir(*dsc);   break;
     default         : break;
     }
   }
@@ -172,97 +166,129 @@ String path;
 
   mainFrm()->closePrgBar();
 
-  display();
-
- // if (noFiles) doc()->saveData(, siteID.dbPath(path));
+  display(updateList);   doc()->saveBaseLine();
 
   sendDisplayMsg();   Sleep(1);   sendWdwScroll(false);   return 0;
   }
 
 
-bool Site::get(UnitDsc& ud) {
-String localPath;
+void Site::get(UnitDsc& ud) {
+UnitDsc* dsc;
 
-  if (!LocalSite::createDir(ud.key.path)) return false;
+  if (!LocalSite::createDir(ud.key.path)) return;
 
-  if (!RemoteSite::loadTransport(ud.key.path)) return false;
+  if (!RemoteSite::loadTransport(ud.key.path)) return;
 
-  localPath = LocalSite::getPath(ud.key.path);
-  if (!doc()->storeXfrBuffer(localPath)) return false;
-
-  closeTransport();
+  if (!LocalSite::storTransport(ud.key.path)) return;
 
   getAttr(ud.key.path, ud.size, ud.date);   ud.unitOp = GetDone;
 
-  UnitDsc* dsc = baseLineList.add(ud);   dsc->unitOp = NilOp;
+  dsc = baseLineList.add(ud);   dsc->unitOp = NilOp;
+  dsc = localDirList.add(ud);   dsc->unitOp = NilOp;
 
-  //sendStepPrgBar();
-
-  return true;
+  sendStepPrgBar();
   }
 
 
 
-bool Site::put(UnitDsc& ud) {
-String localPath;
+void Site::put(UnitDsc& ud) {
+UnitDsc* dsc;
 
-  if (!RemoteSite::createDir(ud.key.path)) return false;
+  if (!RemoteSite::createDir(ud.key.path)) return;
 
-  localPath = LocalSite::getPath(ud.key.path);
+  if (!LocalSite::loadTransport(ud.key.path)) return;
 
-  if (!doc()->loadXfrBuffer(localPath)) return false;
-
-  if (!RemoteSite::storTransport(ud.key.path)) return false;
+  if (!RemoteSite::storTransport(ud.key.path)) return;
 
   ud.unitOp = PutDone;
 
-  closeTransport();   //sendStepPrgBar();
+  if (!webDirList.isEmpty()) {dsc = webDirList.add(ud);  dsc->unitOp = NilOp;}
+  dsc = baseLineList.add(ud);   dsc->unitOp = NilOp;
 
-  ud.unitOp = PutDone;
-
-  return true;
+  sendStepPrgBar();
   }
 
 
 // Del file in remote host
 
-bool Site::del(UnitDsc& ud) {return RemoteSite::del(ud.key.path);}
+void Site::del(UnitDsc& ud) {
+  if (!RemoteSite::del(ud.key.path)) return;
+
+  ud.unitOp = DelDone;
+
+  if (!webDirList.isEmpty()) {webDirList.delRcd(ud);}
+  baseLineList.delRcd(ud);
+
+  sendStepPrgBar();
+  }
 
 
 // Del dir in remote host
 
-bool Site::delDir(UnitDsc& ud) {return RemoteSite::delDir(ud.key.path);}
+void Site::delDir(UnitDsc& ud) {
+  ud.unitOp = DelDirDone;
+
+  if (!RemoteSite::delDir(ud.key.path)) return;
+  baseLineList.delRcd(ud);
+
+  sendStepPrgBar();
+  }
 
 
-void Site::display() {
-UnitListIter iter(updateList);
+void Site::display(UnitList& ul) {
+UnitListIter iter(ul);
 UnitDsc*     dsc;
-int          n;
+int          n = 0;
+int          m = 0;
+String       op;
 
-  notePad << nClrTabs << nSetTab(15);
+  notePad << nClrTabs << nSetTab(35) << nSetTab(47);
 
-  for (dsc = iter(), n = 0; dsc; dsc = iter++) {
+  for (dsc = iter(); dsc; dsc = iter++) {
 
     switch (dsc->unitOp) {
 
-      case NilOp      : continue;
-      case PutOp      : notePad << _T("Put");            n++;   break;
-      case GetOp      : notePad << _T("Get");            n++;   break;
-      case DelOp      : notePad << _T("Del");            n++;   break;
-      case DelDirOp   : notePad << _T("Del Dir");        n++;   break;
-      case MkLclDirOp : notePad << _T("Make Lcl Dir");   n++;   break;
-      case MkRmtDirOp : notePad << _T("Make Rmt Dir");   n++;   break;
-      default         : continue;
+      case NilOp        : op.clear();                  m++;   break;
+      case PutOp        : op = _T("Put");              n++;   break;
+      case GetOp        : op = _T("Get");              n++;   break;
+      case DelOp        : op = _T("Del");              n++;   break;
+      case DelDirOp     : op = _T("Del Dir");          n++;   break;
+
+      case PutDone      : op = _T("Put");              n++;   break;
+      case GetDone      : op = _T("Get");              n++;   break;
+      case DelDone      : op = _T("Delete Rmt File");  n++;   break;
+      case DelDirDone   : op = _T("Delete Rmt Dir");   n++;   break;
+
+      default           : continue;
       }
 
-    notePad << nTab << dsc->key.path<< nCrlf;
+    notePad << dsc->key.path;
+    if (n) {
+      notePad << nTab << op;
+      }
+
+    if (m) {
+      String t = dsc->key.dir ? _T("d") : _T("f");
+      notePad << nTab << t;
+      }
+    notePad << nCrlf;
     }
 
-  if      (n <= 0) notePad << _T("No Files");
-  else if (n == 1) notePad << n << _T(" file");
-  else                   notePad << n << _T(" files");
+  notePad << nCrlf << nTab;
 
-  notePad << _T(" updated") << nCrlf;
+  if (n > 0) {
+    notePad << n << _T(" file");   if (n > 1) notePad << _T("s");
+    notePad << _T(" updated");
+    }
+
+  else if (m > 0) {
+    notePad << m << _T(" entr");
+    if (m == 1) notePad << _T("y");   else notePad << _T("ies");
+    }
+
+  else notePad << _T("No Entries");
+
+  notePad << nCrlf;
 
   sendDisplayMsg();
   }
@@ -277,19 +303,6 @@ int    pos;
     t += s.substr(0, pos);   s = s.substr(pos+1);
     }
   return t + s;
-  }
-
-
-// Returns a relative local address
-
-String  Site::toRelative(TCchar* path) {
-String s     = path;
-bool   isWeb = s.find(_T('/')) >= 0;
-String root  = isWeb ? RemoteSite::root : LocalSite::root;
-
-  if (s.find(root) == 0) s = s.substr(root.length());
-
-  return toLocal(s);
   }
 
 
@@ -349,15 +362,15 @@ String webPath;
 
   dsc = curFileDscs.findDir(key.path);
 
-  if (dsc && dsc->status != NilSts && !dsc->createWebDir(noFiles)) return false;
+  if (dsc && dsc->status != NilSts && !dsc->createWebDir(noFiles)) return;
 
   lclPath = siteID.localRoot  + key.path;
 
-  if (!sftpSSL.getLocalFile(lclPath)) return false;
+  if (!sftpSSL.getLocalFile(lclPath)) return;
 
   webPath = siteID.remoteRoot + key.path;
 
-  if (!sftpSSL.stor(toRemotePath(webPath))) return false;
+  if (!sftpSSL.stor(toRemotePath(webPath))) return;
 
      noFiles++;   updated = true;   return true;        //webFiles.modified();
 #endif
@@ -374,5 +387,18 @@ String webPath;
                       webFiles.modified();    break;
 
       default       : continue;
+#endif
+#if 1
+#else
+String localPath;
+  localPath = LocalSite::getPath(ud.key.path);
+  if (!doc()->storeXfrBuffer(localPath)) return false;
+#endif
+#if 1
+#else
+String localPath;
+  localPath = LocalSite::getPath(ud.key.path);
+
+  if (!doc()->loadXfrBuffer(localPath)) return;
 #endif
 

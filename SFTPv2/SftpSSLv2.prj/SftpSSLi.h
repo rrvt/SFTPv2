@@ -20,7 +20,7 @@ public:
           SftpSSLi() : ssl(0), ctx(0), sbio(0) { }
          ~SftpSSLi() {close();}
 
-  void    clrLast() {}
+  void    clrLast() { }
 
   bool    open(TCchar* host);
   void    close();

@@ -72,7 +72,7 @@ String   pth   = path;
 bool     isWeb = pth.find(_T('/')) >= 0;
 UnitDsc* ud;
 
-  pth = site.toRelative(path);    if (pth.isEmpty() || filterFile(pth)) return 0;
+  pth = site.LocalSite::toRelative(path);    if (pth.isEmpty() || filterFile(pth)) return 0;
 
   ud = find(pth);   if (ud) return ud;
 
@@ -105,10 +105,13 @@ int      pos;
   }
 
 
-UnitDsc* UnitList::add(UnitDsc& uf) {
-UnitDsc* sf = find(uf.key);
+UnitDsc* UnitList::add(UnitDsc& ud) {
+UnitDsc* fd = find(ud.key);
 
-  if (!sf) return data = uf;    return sf;
+  if (!fd) return data = ud;
+  else            *fd  = ud;
+
+  return fd;
   }
 
 
@@ -249,7 +252,7 @@ int i;
 
     if (!unitDsc.load(lex)) return i > 0;
 
-    data = unitDsc;
+    add(unitDsc);
     }
   }
 
@@ -260,7 +263,9 @@ CSVOut       csvOut(ar);
 UnitListIter iter(*this);
 UnitDsc* dsc;
 
-  csvOut << site.name << Comma << site.url << Comma;
+  csvOut << site.name        << Comma;
+  csvOut << site.url         << Comma;
+  csvOut << site.lclRoot()   << Comma;
   csvOut << Version << Comma << vCrlf;
 
   for (dsc = iter(); dsc; dsc = iter++) dsc->save(csvOut);

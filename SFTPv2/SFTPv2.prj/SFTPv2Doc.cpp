@@ -13,9 +13,10 @@
 #include "SftpSSLv2.h"
 #include "SFTPv2View.h"
 #include "UnitList.h"
+#include "UpdateDlg.h"
 #include "workerThrd.h"
 
-#include "PickTransaction.h"            // *** Debug ***
+//#include "PickTransaction.h"            // *** Debug ***
 
 static TCchar* MyPassword = _T("SFTPv2App");
 
@@ -29,6 +30,9 @@ BEGIN_MESSAGE_MAP(SFTPv2Doc, CDoc)
   ON_COMMAND(ID_NewSite,          &onNewSite)
   ON_COMMAND(ID_PickSite,         &onPickSite)
   ON_COMMAND(ID_EditSite,         &onEditSite)
+  ON_COMMAND(ID_CompSites,        &onCompSites)
+  ON_COMMAND(ID_CompPrev,         &onCompPrevious)
+
   ON_COMMAND(ID_Update,           &onUpdate)
   ON_COMMAND(ID_ViewDetails,      &onViewDetails)
 
@@ -88,37 +92,154 @@ String path;
 
   dataSource = BaseLineSrc;
 
-  if (!OnOpenDocument(site.lclRoot()) || baseLineList.isEmpty()) {baseLineList = localDirList;}
+  if (loadBaseLine() && !baseLineList.isEmpty()) notePad << _T("Base Line list loaded");
+  else {
+    baseLineList = localDirList;
+    notePad << _T("*** Initializing base line list, should only happen once! ***");
+    }
 
-  baseLineList.display(_T("Load Site Desc"));
+  notePad << nCrlf << nCrlf;
 
-  return true;
+  baseLineList.display(_T("Base Line List"));   return true;
   }
 
 
-void SFTPv2Doc::onUpdate() {
-PickTransaction pickTransaction;   pickTransaction();       // *** Debug Only ***
+void SFTPv2Doc::onCompSites() {
 
   if (isLocked()) return;
 
-  notePad.clear();
-
-  site.update();
+  updateList.clear();   site.getRmtDir();
 
   display();
   }
 
 
+void SFTPv2Doc::comparePresences() {
+UnitListIter lclIter(localDirList);
+UnitListIter rmtIter(webDirList);
+UnitDsc*     lclUnit;
+UnitDsc*     rmtUnit;
+
+  notePad.clear();   notePad << nClrTabs << nSetTab(65) << nSetTab(70);
+
+  for (lclUnit = lclIter(), rmtUnit = rmtIter(); lclUnit; lclUnit = lclIter++) {
+    if (rmtUnit && rmtUnit->key.dir) rmtUnit = rmtIter++;
+    if (lclUnit->key.dir) continue;
+
+    if (!rmtUnit) {toUpdate(lclUnit, PutOp, _T("== 0 Put: "));   notePad << nCrlf;   continue;}
+
+    loop {
+
+      if (rmtUnit->key.dir) {rmtUnit = rmtIter++;   continue;}
+
+      notePad << lclUnit->key.path << _T(" ... ") << rmtUnit->key.path;
+
+      if (*lclUnit == *rmtUnit) {rmtUnit = rmtIter++;   notePad << nCrlf;   break;}
+
+      if (*lclUnit <  *rmtUnit)
+                          {toUpdate(lclUnit, PutOp, _T(" < Put: "));   notePad << nCrlf;   break;}
+
+      if (*lclUnit >  *rmtUnit)
+            {toUpdate(rmtUnit, GetOp, _T(" > Get: "));   notePad << nCrlf;   rmtUnit = rmtIter++;}
+      }
+    }
+
+    for ( ; rmtUnit; rmtUnit = rmtIter++) {
+      notePad << _T("0 ... ") << rmtUnit->key.path;
+      toUpdate(rmtUnit, GetOp, _T("0== Get: "));   notePad << nCrlf;
+      }
+  }
+
+
+void SFTPv2Doc::onCompPrevious() {
+
+  if (isLocked()) return;
+
+  notePad.clear();   notePad << nClrTabs << nSetTab(65) << nSetTab(70);
+
+  updateList.clear();   comparePrevious();   notePad << nCrlf;
+
+  notePad << _T("Update List") << nCrlf << nCrlf;
+
+  site.display(updateList);
+
+  display();
+  }
+
+
+void SFTPv2Doc::comparePrevious() {
+UnitListIter bslIter(baseLineList);
+UnitListIter lclIter(localDirList);
+UnitDsc*     bslUnit;
+UnitDsc*     lclUnit;
+
+  for (bslUnit = bslIter(), lclUnit = lclIter(); bslUnit; bslUnit = bslIter++) {
+
+    if (!lclUnit) {toUpdate(bslUnit, DelOp, _T("== *0 Delete: "));   notePad << nCrlf;   continue;}
+
+    loop {
+      notePad << bslUnit->key.path << _T(" ... ") << lclUnit->key.path;
+
+      if (*bslUnit == *lclUnit) {
+
+        if (!bslUnit->key.dir &&
+            (bslUnit->size != lclUnit->size || bslUnit->date < lclUnit->date))
+                                                          toUpdate(lclUnit, PutOp, _T("== Put: "));
+        notePad << nCrlf;   lclUnit = lclIter++;   break;
+        }
+
+      if (*bslUnit < *lclUnit) {
+        if (bslUnit->key.dir) toUpdate(bslUnit, DelDirOp, _T("< Delete Dir: "));
+        else                  toUpdate(bslUnit, DelOp,    _T("< Delete: "));
+
+        notePad << nCrlf;  break;
+        }
+
+      if (*bslUnit > *lclUnit) {
+        if (!lclUnit->key.dir) toUpdate(lclUnit, PutOp, _T("> Put: "));
+
+        notePad << nCrlf;   lclUnit = lclIter++;
+        }
+      }
+    }
+
+    for (; lclUnit; lclUnit = lclIter++) {
+      notePad << _T("0 ... ") << lclUnit->key.path;
+      toUpdate(lclUnit, PutOp, _T("0== Put: "));   notePad << nCrlf;
+      }
+  }
+
+
+void SFTPv2Doc::toUpdate(UnitDsc* ud, UnitOp op, TCchar* title) {
+UnitDsc* updUnit = updateList.add(*ud);   updUnit->unitOp = op;
+  notePad << nTab << title << updUnit->key.path;
+  }
+
+
+void SFTPv2Doc::onUpdate() {
+UpdateDlg dlg(updateList);
+
+  if (isLocked()) return;
+
+  notePad.clear();
+
+  if (dlg.DoModal() == IDOK && !updateList.isEmpty()) site.update();
+
+  else {notePad << _T("No updates performed.") << nCrlf;   display();}
+  }
+
+
 void SFTPv2Doc::onViewDetails() {
-PickTransaction pickTransaction;   pickTransaction();       // *** Debug Only ***
 
   if (isLocked()) return;
 
   notePad.clear();
 
   notePad << _T("Update List") << nCrlf << nCrlf;
+  site.display(updateList);   notePad << nCrlf;
 
-  site.display();
+  notePad << _T("Baseline List") << nCrlf << nCrlf;
+  site.display(baseLineList);
 
   display();
   }
@@ -149,11 +270,19 @@ String sect;
 void SFTPv2Doc::onEditCopy() {clipLine.load();}
 
 
-void SFTPv2Doc::onSaveFile()
-          {dataSource = StoreSrc; saveFile(_T("Save File"), _T(""), _T("txt")); display(StoreSrc);}
+void SFTPv2Doc::onSaveFile() {
+
+  if (isLocked()) return;
+
+//  if (!saveBaseLine()) notePad << _T("CSV file not saved: ") << nCrlf;
+
+  display();
+  }
 
 
 void SFTPv2Doc::onSaveNotePad() {
+
+  if (isLocked()) return;
 
   dataSource = NotePadSrc;   if (setSaveAsPath(pathDlgDsc)) OnSaveDocument(path);
 
@@ -203,6 +332,20 @@ String ttl      = title;    ttl += _T(" Output");
   }
 
 
+bool SFTPv2Doc::loadBaseLine() {
+String s = theApp.roamingPath() + removeSpaces(site.name) + _T(".csv")  ;
+
+  dataSource = BaseLineSrc;   return OnOpenDocument(s);
+  }
+
+
+bool SFTPv2Doc::saveBaseLine() {
+String s = theApp.roamingPath() + removeSpaces(site.name) + _T(".csv")  ;
+
+  dataSource = BaseLineSrc;   return OnSaveDocument(s);
+  }
+
+
 // UglyDoc serialization
 
 void SFTPv2Doc::serialize(Archive& ar) {
@@ -212,6 +355,7 @@ void SFTPv2Doc::serialize(Archive& ar) {
       case NotePadSrc : notePad.archive(ar);   return;
       case NamePswdSrc: cngBlk->store(ar);     return;
       case WebSrc     : sftpSSL.store(ar);     return;          // Store buffer in local file
+      case BaseLineSrc: baseLineList.saveCSV(ar);
       default         : return;
       }
 
@@ -236,7 +380,7 @@ void SFTPv2Doc::Dump(CDumpContext& dc) const {CDocument::Dump(dc);}
 
 
 ///-----------------
-
+                 #if 0
 #ifdef Examples
 #include "Store.h"
 #endif
@@ -442,5 +586,56 @@ CNG         cng;
 
   display();
   }
+#endif
+#if 0
+PickTransaction pt;  pt.test();
+#else
+#endif
+#endif
+#if 1
+#else
+      updUnit = updateList.add(*lclUnit);   updUnit->unitOp = PutOp;
+
+      notePad << nTab << updUnit->key.path << nCrlf;
+#endif
+#if 1
+#else
+        updUnit = updateList.add(*lclUnit);   updUnit->unitOp = PutOp;
+        notePad << nTab << _T(" < Update: ") << updUnit->key.path << nCrlf;
+#endif
+#if 1
+#else
+        updUnit = updateList.add(*rmtUnit);   updUnit->unitOp = GetOp;
+        notePad << nTab << _T(" > Update: ") << updUnit->key.path << nCrlf;
+#endif
+#if 1
+#else
+      updUnit = updateList.add(*rmtUnit);   updUnit->unitOp = GetOp;
+      notePad << nTab << _T(" > Update: ") << updUnit->key.path << nCrlf;
+#endif
+#if 1
+#else
+      updUnit = updateList.add(*bslUnit);   updUnit->unitOp = DelOp;
+      notePad << updUnit->key.path << nTab << _T("== *0 ") << nCrlf;
+#endif
+#if 1
+#else
+          updUnit = updateList.add(*bslUnit);   updUnit->unitOp = PutOp;
+          notePad << nTab << _T("== Update: ");
+#endif
+#if 1
+#else
+          updUnit = updateList.add(*bslUnit);   updUnit->unitOp = DelDirOp;
+          notePad << nTab << _T("< Delete Dir: ");
+#endif
+#if 1
+#else
+          updUnit = updateList.add(*bslUnit);   updUnit->unitOp = DelOp;
+          notePad << nTab << _T("< Delete: ");
+#endif
+#if 1
+#else
+          updUnit = updateList.add(*lclUnit);   updUnit->unitOp = PutOp;
+          notePad << nTab << _T("> Update: ") << updUnit->key.path;
 #endif
 

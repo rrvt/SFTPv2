@@ -61,14 +61,14 @@
       <Optimization>MaxSpeed</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile/>
+      <PrecompiledHeaderFile />
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\SftpSSLv2.prj\;$(SolutionDir)..\..\Library\Library\;$(SolutionDir)..\..\Library\Extras\;$(SolutionDir)..\..\OpenSSL.3.1.2\$(Configuration)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <BasicRuntimeChecks/>
+      <BasicRuntimeChecks />
       <FunctionLevelLinking>false</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile/>
+      <PrecompiledHeaderOutputFile />
       <LanguageStandard>stdcpp20</LanguageStandard>
       <SupportJustMyCode>false</SupportJustMyCode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -103,7 +103,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile/>
+      <PrecompiledHeaderFile />
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\SftpSSLv2.prj\;$(SolutionDir)..\..\Library\Library\;$(SolutionDir)..\..\Library\Extras\;$(SolutionDir)..\..\OpenSSL.3.1.2\$(Configuration)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)$(ProjectName).pdb</ProgramDataBaseFileName>
@@ -111,8 +111,8 @@
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <PrecompiledHeaderOutputFile/>
-      <BasicRuntimeChecks/>
+      <PrecompiledHeaderOutputFile />
+      <BasicRuntimeChecks />
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -123,7 +123,7 @@
       <AdditionalDependencies>Htmlhelp.lib;Library.lib;SftpSSLv2.lib;libssl.lib;libcrypto.lib</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <ProgramDatabaseFile/>
+      <ProgramDatabaseFile />
       <AdditionalLibraryDirectories>$(Solutiondir)..\..\Library\$(Configuration)\;$(SolutionDir)..\$(Configuration)\;$(SolutionDir)..\..\OpenSSL.3.1.2\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -148,7 +148,6 @@
     <ClInclude Include="LocalSite.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="MyToolBar.h" />
-    <ClInclude Include="PickTransaction.h" />
     <ClInclude Include="RemoteSite.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SFTPv2.h" />
@@ -162,6 +161,7 @@
     <ClInclude Include="SiteLoginDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="AppUtilities.h" />
+    <ClInclude Include="UpdateDlg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Library\Extras\AboutDlg.cpp" />
@@ -171,7 +171,6 @@
     <ClCompile Include="LocalSite.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MyToolBar.cpp" />
-    <ClCompile Include="PickTransaction.cpp" />
     <ClCompile Include="RemoteSite.cpp" />
     <ClCompile Include="SFTPv2.cpp" />
     <ClCompile Include="SFTPv2Doc.cpp" />
@@ -182,6 +181,7 @@
     <ClCompile Include="UnitDsc.cpp" />
     <ClCompile Include="UnitList.cpp" />
     <ClCompile Include="SiteLoginDlg.cpp" />
+    <ClCompile Include="UpdateDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SFTPv2.rc" />
@@ -192,15 +192,15 @@
     <None Include="..\..\Library\Extras\Options.rc2" />
     <None Include="..\..\Library\Extras\RptOrientTwo.rc2" />
     <None Include="res\SFTPv2.rc2" />
-    <None Include="res\Toolbar.bmp" />
     <None Include="C:\Users\rrvt\AppData\Roaming\SFTPv2\SFTPv2.ini" />
     <None Include="..\README.md" />
     <None Include="C:\Users\rrvt\AppData\Roaming\SFTP\SFTP.ini" />
-  <None Include="..\Doc\ThreadIssue.txt" />
+    <None Include="..\Doc\ThreadIssue.txt" />
+    <None Include="C:\Users\rrvt\AppData\Roaming\SFTPv2\SWDETestWebSite.csv" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\SFTPv2.ico" />
-    <Image Include="res\ShortToolbar.bmp" />
+    <Image Include="res\Toolbar04.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Library\Library\Library.vcxproj">

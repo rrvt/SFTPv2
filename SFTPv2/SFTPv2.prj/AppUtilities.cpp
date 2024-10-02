@@ -11,7 +11,18 @@ String& fixRemotePath(String& path)
                           {if (path[path.length() - 1] != _T('/'))  path += _T('/');  return path;}
 
 
+String removeSpaces(TCchar* name) {
+String s = name;
+int    pos;
+String t;
 
+  for (pos = s.find(_T(' ')); pos >= 0; pos = s.find(_T(' ')))
+                                                           {t += s.substr(0, pos);   s = s.substr(pos+1);}
+  t += s;   return t;
+  }
+
+
+#if 0
 String toLocal(TCchar* path) {
 String s = path;
 int    n = s.length();
@@ -39,7 +50,7 @@ int    i;
 
   return s;
   }
-
+#endif
 
 
 
@@ -48,7 +59,7 @@ int pos = path.findLastOf(sep);
 
   right = path;
 
-  path = path.substr(0, pos);   pos = path.findLastOf(sep);    if (pos <= 0) return false;
+  path = path.substr(0, pos);   pos = path.findLastOf(sep);    if (pos < 0) return false;
 
   path = path.substr(0, pos+1);   right = right.substr(pos+1);   return true;
   }

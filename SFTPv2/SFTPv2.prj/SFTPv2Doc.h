@@ -7,6 +7,7 @@
 #include "MainFrame.h"
 #include "SFTPv2.h"
 #include "Site.h"
+#include "UnitDsc.h"
 
 
 enum DataSource {NotePadSrc, NamePswdSrc, BaseLineSrc, WebSrc, StoreSrc};
@@ -36,16 +37,22 @@ public:
   DataSource dataSrc() {return dataSource;}
   void       display(DataSource ds = NotePadSrc);
 
+  void       comparePresences();
+
+  bool       loadBaseLine();
+  bool       saveBaseLine();
+
   void       loadCNG(CNGblock& cng);
   void       saveCNG(CNGblock* cng);
 
   bool       loadXfrBuffer(TCchar* path)  {dataSource = WebSrc; return OnOpenDocument(path);}
   bool       storeXfrBuffer(TCchar* path) {dataSource = WebSrc; return OnSaveDocument(path);}
 
+
   virtual void serialize(Archive& ar);
 
 // Implementation
-public:
+
 #ifdef _DEBUG
   virtual void AssertValid() const;
   virtual void Dump(CDumpContext& dc) const;
@@ -53,10 +60,13 @@ public:
 
 private:
 
-  bool   loadSiteDescriptors();
-  String pswdPath() {return theApp.roamingPath() + site.dataFileName() + _T("Data.cng");}
+  void       comparePrevious();
+  void       toUpdate(UnitDsc* ud, UnitOp op, TCchar* title);
 
-  void   saveFile(TCchar* title, TCchar* suffix, TCchar* fileType);
+  bool       loadSiteDescriptors();
+  String     pswdPath() {return theApp.roamingPath() + site.dataFileName() + _T("Data.cng");}
+
+  void       saveFile(TCchar* title, TCchar* suffix, TCchar* fileType);
 
 // Generated message map functions
 
@@ -69,6 +79,8 @@ public:
   afx_msg void onNewSite();
   afx_msg void onPickSite();
   afx_msg void onEditSite();
+  afx_msg void onCompSites();
+  afx_msg void onCompPrevious();
   afx_msg void onUpdate();
 
   afx_msg void onViewDetails();

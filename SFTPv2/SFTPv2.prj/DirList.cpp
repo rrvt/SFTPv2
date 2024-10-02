@@ -7,7 +7,7 @@
 
 
 void DirList::add(UnitDsc* dsc)
-                {DirItem item;   item.level = pathLevel(dsc->key.path);   item.dsc = dsc;   data = item;}
+          {DirItem item;   item.level = pathLevel(dsc->key.path);   item.dsc = dsc;   data = item;}
 
 
 

@@ -9,8 +9,7 @@
 String& fixLocalPath( String& path);          // Add '\' to end of path
 String& fixRemotePath(String& path);          // Add '/' to end of path
 
-String toLocal( TCchar* path);
-String toRemote(TCchar* path);
+String  removeSpaces(TCchar* name);
 
 bool   rmvLastDir(String& path, String& right, Tchar sep);  // Remove last subdir from path and
                                                             // return the path removed in right.

@@ -78,7 +78,7 @@
     <ClInclude Include="UnitDsc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PickTransaction.h">
+    <ClInclude Include="UpdateDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,7 +134,7 @@
     <ClCompile Include="UnitDsc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PickTransaction.cpp">
+    <ClCompile Include="UpdateDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -145,9 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SFTPv2.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\Toolbar.bmp">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\Library\Extras\AboutDlg.rc2">
@@ -165,12 +162,14 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="C:\Users\rrvt\AppData\Roaming\SFTP\SFTP.ini" />
+    <None Include="..\Doc\ThreadIssue.txt" />
+    <None Include="C:\Users\rrvt\AppData\Roaming\SFTPv2\SWDETestWebSite.csv" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\ShortToolbar.bmp">
+    <Image Include="res\SFTPv2.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\SFTPv2.ico">
+    <Image Include="res\Toolbar04.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

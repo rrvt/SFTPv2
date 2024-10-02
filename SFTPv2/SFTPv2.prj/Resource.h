@@ -13,6 +13,7 @@
 #define IDR_TBSaveMenu                  104
 #define IDR_RtMouseMenu                 105
 #define IDD_WebLogin                    106
+#define IDD_SiteUpdate                  107
 
 #define IDC_Name                        200
 #define IDC_LclRoot                     201
@@ -22,11 +23,15 @@
 #define IDC_Password                    205
 #define IDC_RemoteRoot                  206
 #define IDC_ProgCtrl                    207
+#define IDC_UpdateList                  208
+#define IDC_UpdateAll                   209
 
 #define ID_NewSite                      400
 #define ID_EditSite                     401
 #define ID_PickSite                     402
-#define ID_Update                       403
+#define ID_CompSites                    403
+#define ID_CompPrev                     404
+#define ID_Update                       405
 #define ID_ViewDetails                  459
 
 #define ID_TBSaveMenu                   413
@@ -45,9 +50,10 @@
 #define ID_Pup2                         424
 
 #define ID_StepPrgBarMsg       (WM_USER + 0)
-#define ID_UpdateMsg           (WM_USER + 1)
-#define ID_SetWdwScroll        (WM_USER + 2)
-#define ID_DisplayMsg          (WM_USER + 3)
+#define ID_RmtDirMsg           (WM_USER + 1)
+#define ID_UpdateMsg           (WM_USER + 2)
+#define ID_SetWdwScroll        (WM_USER + 3)
+#define ID_DisplayMsg          (WM_USER + 4)
 
 // Next default values for new objects
 //

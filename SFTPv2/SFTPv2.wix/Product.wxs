@@ -2,36 +2,30 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
 <Product Id="*" UpgradeCode="7FD9FFEC-4EC7-4A43-B117-AC07BDA31746" Language="1033"
-                  Manufacturer="Bob -- K6RWY" Name="SFTPv2"
-                  Version="!(bind.fileVersion.SFTPv2.cmp)"
-                  >
+                Manufacturer="Bob -- K6RWY" Name="SFTPv2"
+                Version="!(bind.fileVersion.SFTPv2.cmp)"
+                >
 
   <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"
-                      Manufacturer="Bob -- K6RWY" Description="Installs SFTPv2"
-                      Comments="Copyright (c) Bob -- K6RWY"
-                      />
+                Manufacturer="Bob -- K6RWY" Description="Installs SFTPv2"
+                Comments="Copyright (c) Bob -- K6RWY"
+                />
 
   <MajorUpgrade Schedule="afterInstallInitialize"
-                                AllowDowngrades="no"   IgnoreRemoveFailure="no"   AllowSameVersionUpgrades="no"
-                                DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+                AllowDowngrades="no"   IgnoreRemoveFailure="no"   AllowSameVersionUpgrades="no"
+                DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+                />
 
   <MediaTemplate EmbedCab="yes" />
 
-  <UI Id="My_InstallDir.ui">
-    <UIRef Id="WixUI_InstallDir" />
-    <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">
-      NOT Installed
-    </Publish>
-    <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">
-      1
-    </Publish>
-  </UI>
+  <WixVariable Id="WixUILicenseRtf"
+                              Value="$(var.SolutionDir)..\..\Library\License\MITLicenseFile.rtf" />
+  <UI Id="My_InstallDir.ui"><UIRef Id="WixUI_InstallDir" /></UI>
 
   <WixVariable Id="WixUIDialogBmp" Value="C:\Program Files (x86)\WixApp\dialog.bmp"/>
   <WixVariable Id="WixUIBannerBmp" Value="C:\Program Files (x86)\WixApp\banner.bmp"/>
 
-  <Icon     Id="SFTPv201Icon.ico"
-                            SourceFile="$(var.SolutionDir)..\SFTPv2.prj\res\SFTPv2.ico"/>
+  <Icon     Id="SFTPv201Icon.ico" SourceFile="$(var.SolutionDir)..\SFTPv2.prj\res\SFTPv2.ico"/>
   <Property Id="ARPPRODUCTICON"  Value="SFTPv201Icon.ico" />
 
   <Feature Id="ProductFeatures" Title="Main Product" Level="1" >
@@ -41,20 +35,20 @@
 </Product>
 
 <Fragment>
-<ComponentGroup Id="SFTPv2.ftr">
-  <ComponentRef Id="SFTPv2.cmp"/>
-  <ComponentRef Id="Help.cmp"/>
-</ComponentGroup>
-<ComponentGroup Id="Uninstall_SFTPv2.ftr">
-  <ComponentRef Id="Uninstall_SFTPv2.cmp"/>
-</ComponentGroup>
+  <ComponentGroup Id="SFTPv2.ftr">
+    <ComponentRef Id="SFTPv2.cmp"/>
+    <ComponentRef Id="Help.cmp"/>
+  </ComponentGroup>
+  <ComponentGroup Id="Uninstall_SFTPv2.ftr">
+    <ComponentRef Id="Uninstall_SFTPv2.cmp"/>
+  </ComponentGroup>
 </Fragment>
 
 <!--Directory structure-->
 <Fragment>
   <Directory Id="TARGETDIR" Name="SourceDir">
     <Directory Id="ProgramFilesFolder">
-      <Directory Id="SFTPv2.pff" Name="SFTPv2" />
+      <Directory Id="SFTPV2.PFF" Name="SFTPv2" />
     </Directory>
 
     <Directory Id="ProgramMenuFolder">
@@ -62,25 +56,22 @@
     </Directory>
 
     <Directory Id="DesktopFolder" />
-
   </Directory>
 
   <Property Id="ApplicationFolderName" Value="SFTPv2" />
-  <Property Id="WIXUI_INSTALLDIR"      Value="SFTPv2.pff"/>
+  <Property Id="WIXUI_INSTALLDIR"      Value="SFTPV2.PFF"/>
   <Property Id="WixAppFolder"          Value="WixPerMachineFolder" />
 </Fragment>
 
 <Fragment>
-
-  <Component Id="SFTPv2.cmp"  Guid="B46F39F3-C382-49FB-BD93-07C713F99826"
-                                                                          Directory="SFTPv2.pff">
+  <Component Id="SFTPv2.cmp" Guid="B46F39F3-C382-49FB-BD93-07C713F99826" Directory="SFTPV2.PFF">
     <File Id="SFTPv2.cmp" Source="$(var.SolutionDir)..\Release\SFTPv2.exe" KeyPath="yes"/>
 
     <Shortcut Id               = "SFTPv2.shc"
               Name             = "SFTPv2"
               Advertise        = "yes"
               Directory        = "SFTPv2.pmf"
-              WorkingDirectory = "SFTPv2.pff"
+              WorkingDirectory = "SFTPV2.PFF"
               Icon             = "SFTPv201Icon.ico"
               />
 
@@ -88,7 +79,7 @@
               Name             = "SFTPv2"
               Advertise        = "yes"
               Directory        = "DesktopFolder"
-              WorkingDirectory = "SFTPv2.pff"
+              WorkingDirectory = "SFTPV2.PFF"
               Icon             = "SFTPv201Icon.ico"
               />
     <Condition>
@@ -96,16 +87,14 @@
     </Condition>
   </Component>
 
-  <Component Id="Help.cmp"  Guid="54277460-7F62-47F4-B4E8-12E60068B2D9" Directory="SFTPv2.pff">
+  <Component Id="Help.cmp" Guid="54277460-7F62-47F4-B4E8-12E60068B2D9" Directory="SFTPV2.PFF">
     <File Id="Help.cmp" Source="$(var.SolutionDir)..\Release\SFTPv2.chm" KeyPath="yes"/>
   </Component>
-
 </Fragment>
 
 <Fragment>
-
-  <Component Id="Uninstall_SFTPv2.cmp"
-                              Guid="37495A41-C4C7-441D-A401-E940BDC711E2" Directory="SFTPv2.pmf">
+  <Component Id="Uninstall_SFTPv2.cmp" Guid="169E692F-F1EF-4A03-9B03-894192F4F84D"
+                                                                            Directory="SFTPv2.pmf">
 
     <Shortcut Id               = "UninstallSFTPv2.shc"
               Name             = "Uninstall SFTPv2"
@@ -116,9 +105,7 @@
               />
     <RemoveFolder Id="SFTPv2.uni" Directory="SFTPv2.pmf" On="uninstall"/>
     <RegistryValue Root="HKCU" Key="Software\Uninstall_SFTPv2.cmp" Name="installed"
-                   Type="integer" Value="1" KeyPath="yes"/>
+                                                           Type="integer" Value="1" KeyPath="yes"/>
   </Component>
-
 </Fragment>
-
 </Wix>

@@ -22,6 +22,8 @@ BEGIN_MESSAGE_MAP(MainFrame, CFrameWndEx)
   ON_WM_MOVE()
   ON_WM_SIZE()
 
+
+  ON_MESSAGE(ID_RmtDirMsg,     &onRmtDirMsg)
   ON_MESSAGE(ID_UpdateMsg,     &onUpdateMsg)
   ON_MESSAGE(ID_StepPrgBarMsg, &onStepPrgBarMsg)
   ON_MESSAGE(ID_SetWdwScroll,  &onSetWdwScroll)
@@ -109,7 +111,7 @@ LRESULT MainFrame::OnResetToolBar(WPARAM wParam, LPARAM lParam) {setupToolBar();
 void MainFrame::setupToolBar() {
 CRect winRect;   GetWindowRect(&winRect);   toolBar.set(winRect);
 
-  toolBar.addMenu(   ID_TBSaveMenu, IDR_TBSaveMenu,  4);
+  toolBar.addMenu(   ID_TBSaveMenu, IDR_TBSaveMenu,  6);
   }
 
 
@@ -125,6 +127,8 @@ CRect winRect;
   rect.right = winRect.right - 20;   rect.bottom = rect.top + 10;
 
   progressBar.Create(WS_CHILD | WS_VISIBLE | PBS_SMOOTH, rect, this, IDC_ProgCtrl);
+
+  noSteps += noSteps / 10;
 
   progressBar.SetRange(0, noSteps);    progressBar.SetPos(0);   progressBar.SetStep(1);
   }
@@ -151,7 +155,7 @@ void MainFrame::Dump(CDumpContext& dc) const {CFrameWndEx::Dump(dc);}
 
 
 ///-----------------------
-
+#if 0
 #ifdef Examples
   toolBar.addButton( ID_Button, _T("Load Combo"));
   toolBar.addEditBox(ID_EditBox, 20);
@@ -162,4 +166,4 @@ void MainFrame::Dump(CDumpContext& dc) const {CFrameWndEx::Dump(dc);}
 
 #else
 #endif
-
+#endif

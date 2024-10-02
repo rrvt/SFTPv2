@@ -58,6 +58,8 @@ public:
   afx_msg void    OnSize(UINT nType, int cx, int cy);
 
   afx_msg LRESULT onStepPrgBarMsg(WPARAM wParam, LPARAM lParam);
+  afx_msg LRESULT onRmtDirMsg(    WPARAM wParam, LPARAM lParam)
+                                                          {return site.finRmtDir(wParam, lParam);}
   afx_msg LRESULT onUpdateMsg(    WPARAM wParam, LPARAM lParam)
                                                           {return site.finUpdate(wParam, lParam);}
   afx_msg LRESULT onSetWdwScroll( WPARAM wParam, LPARAM lParam);

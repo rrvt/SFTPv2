@@ -91,7 +91,10 @@ int    pos2;
 bool SftpSSL::cwd(TCchar* dir) {
 int    i;
 
-  for (i = 0; i < Retries && !sftpSSLi.sendCmd(_T("CWD"), dir, 250); i++) Sleep(10);
+  for (i = 0; i < Retries && !sftpSSLi.sendCmd(_T("CWD"), dir, 250); i++)
+    Sleep(10);
+
+notePad << _T("Tries: ") << i << nCrlf;
 
   return i < Retries;
   }
@@ -204,6 +207,15 @@ uint pos;
 void SftpSSL::load(Archive& ar) {return sftpTransport.load(ar);}
 
 
+#if 0
+
+  if (!skt) return;
+
+  if (lastOp == WriteOp) {if (shutdown(skt, SD_SEND)) err.wsa(_T("Shutdown"));   read();}
+
+  closesocket(skt);   skt = 0;
+#endif
+
 // Copy sftpTransport store to web host file at webPath
 
 bool SftpSSL::stor(TCchar* webPath) {
@@ -214,7 +226,7 @@ bool        rslt;
 
   if (!sftpTransport.initPassiveMode(_T("STOR"), webPath)) return false;
 
-  rslt = sftpTransport.write();
+  rslt = sftpTransport.write();   sftpTransport.close();   sftpTransport.clear();
 
   return rslt & sftpSSLi.readRsp(226);            // 226 - Closing data connection. Requested file
   }                                               // action successful
@@ -282,6 +294,9 @@ void SftpSSL::closeTransport() {sftpTransport.close();}         // Close Transpo
 
 void SftpSSL::openSSLThreadStop() {OPENSSL_thread_stop();}
 
+
+String& SftpSSL::firstResp() {return sftpSSLi.firstResp;}
+String& SftpSSL::lastResp()  {return sftpSSLi.lastResp;}
 
 
 

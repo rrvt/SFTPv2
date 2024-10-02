@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "UnitDsc.h"
+#include "Filename.h"
 #include "CSVLex.h"
 #include "CSVOut.h"
 
@@ -81,176 +82,36 @@ String d  = date;
   }
 
 
-bool UnitDsc::put(int& noFiles) {
-#if 0
-String   lclPath;
-String   webPath;
-UnitDsc* unitDsc;
+void UnitDsc::set(TCchar* relPath, bool dir, UnitOp op) {
+String& path = key.path;
 
-  if (key.dir) return createWebDir(noFiles);
+  normalize(relPath);   key.dir = dir;   unitOp = op;
 
-  unitDsc = curFileDscs.findDir(key.path);
-
-  if (unitDsc && unitDsc->unitOp != NilOp && !unitDsc->createWebDir(noFiles)) return false;
-
-  lclPath = site.localRoot  + key.path;
-
-  if (!sftpSSL.getLocalFile(lclPath)) return false;
-
-  webPath = site.root + key.path;
-
-  if (!sftpSSL.stor(toRemotePath(webPath))) return false;
-
-  sendStepPrgBar();   noFiles++;   updated = true;   return true;        //webFiles.modified();
+#if 1
+  name = dir ? path.substr(0, path.length()-1) : path;   name = removePath(name);
+#else
+  if (!dir)                                                         name = removePath(path);
+  else {String pth = path;   pth = pth.substr(0, pth.length()-1);   name = removePath(pth);}
 #endif
   }
 
 
-bool UnitDsc::createWebDir(int& noFiles) {
-#if 0
-String       right = key.path;
-String       left;
-int          pos;
-UnitKey  key;
-UnitDsc* dsc;
-String       fullPath;
+String& UnitDsc::normalize(TCchar* relPath) {
+String& path = key.path;
+int     n    = path.length();
+int     i;
+int     pos;
+String  prefix;
 
-  for (pos = right.find(_T('\\')); pos >= 0; pos = right.find(_T('\\'))) {
+  path = relPath;   n = path.length();
 
-    left += right.substr(0, pos+1);   right = right.substr(pos+1);
+  for (i = 0; i < n; i++) if (path[i] == _T('/')) path[i] = _T('\\');
 
-    key.dir = true;   key.path = left;   dsc = curFileDscs.find(key);
+  pos = path.find(_T("\\\\"));
 
-    if (!dsc || (dsc->status != NilOp && !dsc->updated)) {
-      fullPath = siteID.remoteRoot + left;   if (!sftpSSL.mkd(toRemotePath(fullPath))) return false;
+  if (pos >= 0) {prefix = path.substr(0, pos+1);   path = prefix + path.substr(pos+2);}
 
-      sendStepPrgBar();   noFiles++;   if (dsc) dsc->updated = true;
-      }
-    }
-#endif
-  return true;
-  }
-
-
-bool UnitDsc::get(int& noFiles) {
-#if 0
-String webPath;
-String lclPath;
-String rslt;
-
-  if (key.dir) return createLocalDir(noFiles);
-
-  webPath = siteID.remoteRoot + key.path;
-
-  if (!sftpSSL.retr(toRemotePath(webPath))) return false;
-
-  lclPath = siteID.localRoot + key.path;
-
-  if (!doc()->saveData(StoreSrc, toLocalPath(lclPath))) return false;
-
-  sendStepPrgBar();   noFiles++;   updated = true;   addLclAttr(lclPath);
-
-  sftpSSL.noop(rslt);
-#endif
-  return true;
-  }
-
-
-bool UnitDsc::createLocalDir(int& noFiles) {
-#if 0
-String       right = key.path;
-String       left;
-int          pos;
-UnitKey  key;
-UnitDsc* dsc;
-String       fullPath;
-
-  for (pos = right.find(_T('\\')); pos >= 0; pos = right.find(_T('\\'))) {
-
-    left += right.substr(0, pos+1);   right = right.substr(pos+1);
-
-    key.dir = true;   key.path = left;   dsc = curFileDscs.find(key);
-
-    if (!dsc || (dsc->status != NilOp && !dsc->updated)) {
-      fullPath = siteID.localRoot + left;
-
-      if (!CreateDirectory(fullPath, 0)) return false;
-
-      sendStepPrgBar();   noFiles++;   if (dsc) dsc->updated = true;
-      }
-    }
-#endif
-  return true;
-  }
-
-
-bool UnitDsc::del(int& noFiles) {
-#if 0
-String webPath;
-
-  if (key.dir) return removeDir(noFiles);
-
-  webPath = siteID.remoteRoot + key.path;   webPath = toRemotePath(webPath);
-
-  if (!sftpSSL.del(webPath)) return false;
-
-  sendStepPrgBar();   noFiles++;   updated = true;
-#endif
-  return true;
-  }
-
-
-bool UnitDsc::removeDir(int& noFiles) {
-#if 0
-String       prefix = key.path;
-UnitListIter iter(curFileDscs);
-UnitDsc* dsc;
-DirList      dl;
-DLIter       dlIter(dl);
-DirItem*     item;
-
-  for (dsc = iter(); dsc; dsc = iter++)
-                               {String& path = dsc->key.path;   if (path.find(prefix) == 0) dl.add(dsc);}
-
-  for (item = dlIter(); item; item = dlIter++) {
-    UnitDsc* dsc = item->dsc;
-
-    if (!dsc->key.dir) {if (!dsc->del(noFiles)) return false;   continue;}
-
-//  notePad << item->level << nTab << dsc->key.path << nCrlf;
-
-    String webPath = siteID.remoteRoot + dsc->key.path;   webPath = toRemotePath(webPath);
-
-    if (!sftpSSL.rmd(webPath)) return false;
-
-    sendStepPrgBar();   noFiles++;   dsc->updated = true;
-    }
-  return dl.nData() > 0;
-#endif
-  return true;
-  }
-
-
-void UnitDsc::log() {
-#if 0
-String d    = date;
-String chk  = check ? _T("X  ") : _T("_  ");
-String sts;
-String updt = updated ? _T("Updt") : _T("_  ");
-
-  switch (status) {
-    case NilOp   : sts = _T("NilOp");    break;
-    case WebPutSts: sts = _T("WebPutSts"); break;
-    case DifPutSts: sts = _T("DifPutSts"); break;
-    case GetSts   : sts = _T("GetSts");    break;
-    case DelSts   : sts = _T("DelSts");    break;
-    case OthSts   : sts = _T("OthSts");    break;
-    default       : sts = _T("Unknown");   break;
-    }
-
-  notePad << name << nTab << chk << nTab << updt << nTab << sts;
-  notePad << nTab << size << nTab << d << nTab << key.path << nCrlf;
-#endif
+  return path;
   }
 
 
@@ -266,13 +127,191 @@ bool UnitKey::operator== (UnitKey& k) {return  dir == k.dir && _tcsicmp(path, k.
 bool UnitKey::operator!= (UnitKey& k) {return  dir != k.dir || _tcsicmp(path, k.path) != 0;}
 
 bool UnitKey::operator<  (UnitKey& k)
-                                {return  dir > k.dir || (dir == k.dir && _tcsicmp(path, k.path) <  0);}
+                          {return  dir > k.dir || (dir == k.dir && _tcsicmp(path, k.path) <  0);}
 bool UnitKey::operator<= (UnitKey& k)
-                                {return (dir > k.dir || (dir == k.dir && _tcsicmp(path, k.path) <= 0));}
+                          {return (dir > k.dir || (dir == k.dir && _tcsicmp(path, k.path) <= 0));}
 
 bool UnitKey::operator>  (UnitKey& k)
-                                {return  dir < k.dir || (dir == k.dir && _tcsicmp(path, k.path) >  0);}
+                          {return  dir < k.dir || (dir == k.dir && _tcsicmp(path, k.path) >  0);}
 bool UnitKey::operator>= (UnitKey& k)
-                                {return (dir < k.dir || (dir == k.dir && _tcsicmp(path, k.path) >= 0));}
+                          {return (dir < k.dir || (dir == k.dir && _tcsicmp(path, k.path) >= 0));}
 
 
+
+
+//--------------
+
+#if 0
+
+                          bool UnitDsc::put(int& noFiles) {
+                          #if 0
+                          String   lclPath;
+                          String   webPath;
+                          UnitDsc* unitDsc;
+
+                            if (key.dir) return createWebDir(noFiles);
+
+                            unitDsc = curFileDscs.findDir(key.path);
+
+                            if (unitDsc && unitDsc->unitOp != NilOp && !unitDsc->createWebDir(noFiles)) return false;
+
+                            lclPath = site.localRoot  + key.path;
+
+                            if (!sftpSSL.getLocalFile(lclPath)) return false;
+
+                            webPath = site.root + key.path;
+
+                            if (!sftpSSL.stor(toRemotePath(webPath))) return false;
+
+                            sendStepPrgBar();   noFiles++;   updated = true;   return true;        //webFiles.modified();
+                          #endif
+                            }
+
+
+                          bool UnitDsc::createWebDir(int& noFiles) {
+                          #if 0
+                          String       right = key.path;
+                          String       left;
+                          int          pos;
+                          UnitKey  key;
+                          UnitDsc* dsc;
+                          String       fullPath;
+
+                            for (pos = right.find(_T('\\')); pos >= 0; pos = right.find(_T('\\'))) {
+
+                              left += right.substr(0, pos+1);   right = right.substr(pos+1);
+
+                              key.dir = true;   key.path = left;   dsc = curFileDscs.find(key);
+
+                              if (!dsc || (dsc->status != NilOp && !dsc->updated)) {
+                                fullPath = siteID.remoteRoot + left;   if (!sftpSSL.mkd(toRemotePath(fullPath))) return false;
+
+                                sendStepPrgBar();   noFiles++;   if (dsc) dsc->updated = true;
+                                }
+                              }
+                          #endif
+                            return true;
+                            }
+
+
+                          bool UnitDsc::get(int& noFiles) {
+                          #if 0
+                          String webPath;
+                          String lclPath;
+                          String rslt;
+
+                            if (key.dir) return createLocalDir(noFiles);
+
+                            webPath = siteID.remoteRoot + key.path;
+
+                            if (!sftpSSL.retr(toRemotePath(webPath))) return false;
+
+                            lclPath = siteID.localRoot + key.path;
+
+                            if (!doc()->saveData(StoreSrc, toLocalPath(lclPath))) return false;
+
+                            sendStepPrgBar();   noFiles++;   updated = true;   addLclAttr(lclPath);
+
+                            sftpSSL.noop(rslt);
+                          #endif
+                            return true;
+                            }
+
+
+                          bool UnitDsc::createLocalDir(int& noFiles) {
+                          #if 0
+                          String       right = key.path;
+                          String       left;
+                          int          pos;
+                          UnitKey  key;
+                          UnitDsc* dsc;
+                          String       fullPath;
+
+                            for (pos = right.find(_T('\\')); pos >= 0; pos = right.find(_T('\\'))) {
+
+                              left += right.substr(0, pos+1);   right = right.substr(pos+1);
+
+                              key.dir = true;   key.path = left;   dsc = curFileDscs.find(key);
+
+                              if (!dsc || (dsc->status != NilOp && !dsc->updated)) {
+                                fullPath = siteID.localRoot + left;
+
+                                if (!CreateDirectory(fullPath, 0)) return false;
+
+                                sendStepPrgBar();   noFiles++;   if (dsc) dsc->updated = true;
+                                }
+                              }
+                          #endif
+                            return true;
+                            }
+
+
+                          bool UnitDsc::del(int& noFiles) {
+                          #if 0
+                          String webPath;
+
+                            if (key.dir) return removeDir(noFiles);
+
+                            webPath = siteID.remoteRoot + key.path;   webPath = toRemotePath(webPath);
+
+                            if (!sftpSSL.del(webPath)) return false;
+
+                            sendStepPrgBar();   noFiles++;   updated = true;
+                          #endif
+                            return true;
+                            }
+
+
+                          bool UnitDsc::removeDir(int& noFiles) {
+                          #if 0
+                          String       prefix = key.path;
+                          UnitListIter iter(curFileDscs);
+                          UnitDsc* dsc;
+                          DirList      dl;
+                          DLIter       dlIter(dl);
+                          DirItem*     item;
+
+                            for (dsc = iter(); dsc; dsc = iter++)
+                                                         {String& path = dsc->key.path;   if (path.find(prefix) == 0) dl.add(dsc);}
+
+                            for (item = dlIter(); item; item = dlIter++) {
+                              UnitDsc* dsc = item->dsc;
+
+                              if (!dsc->key.dir) {if (!dsc->del(noFiles)) return false;   continue;}
+
+                          //  notePad << item->level << nTab << dsc->key.path << nCrlf;
+
+                              String webPath = siteID.remoteRoot + dsc->key.path;   webPath = toRemotePath(webPath);
+
+                              if (!sftpSSL.rmd(webPath)) return false;
+
+                              sendStepPrgBar();   noFiles++;   dsc->updated = true;
+                              }
+                            return dl.nData() > 0;
+                          #endif
+                            return true;
+                            }
+
+
+                          void UnitDsc::log() {
+                          #if 0
+                          String d    = date;
+                          String chk  = check ? _T("X  ") : _T("_  ");
+                          String sts;
+                          String updt = updated ? _T("Updt") : _T("_  ");
+
+                            switch (status) {
+                              case NilOp   : sts = _T("NilOp");    break;
+                              case WebPutSts: sts = _T("WebPutSts"); break;
+                              case DifPutSts: sts = _T("DifPutSts"); break;
+                              case GetSts   : sts = _T("GetSts");    break;
+                              case DelSts   : sts = _T("DelSts");    break;
+                              case OthSts   : sts = _T("OthSts");    break;
+                              default       : sts = _T("Unknown");   break;
+                              }
+
+                            notePad << name << nTab << chk << nTab << updt << nTab << sts;
+                            notePad << nTab << size << nTab << d << nTab << key.path << nCrlf;
+                          #endif
+                            }
+#endif
