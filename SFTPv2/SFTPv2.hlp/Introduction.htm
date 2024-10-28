@@ -19,10 +19,119 @@
 <!-- InstanceEndEditable -->
 
 <!-- InstanceBeginEditable name="Body" -->
-<h2>App Template</h2>
+<h2>Secure FTP Implementation</h2>
 <p>
-App Template is a template to be used to by MakeApp to create a new Application.  It
-implements a few simple operations describe under
+Web Host implementations have moved on and left legacy applications like Dreamweaver behind.  The particular host
+that I use moved to Secure FTP with which to upload files.  Clearly a new mechnaism is needed to upload files.  This
+application purports to upload only those files that need to be uploaded.  Unfortunately, sometimes we need
+to delete files on the web host and sometimes we need to download files from the web host.
+furthermore, directories may be needed to created or deleted on the web host and sometimes directories
+need to created in the local PC version of the web site.
+</p>
+<p>
+  There are two comparisons that may be performed in this application:
+</p>
+<ul>
+  <li>Compare the present and absence of directories and files  in the web host and the local PC.</li>
+  <li>Compare the size and date of each file at the last transfer between the local PC and web host and
+the current size and date of each file.</li>
+</ul>
+
+<p>
+The present/absence comparison is useful when starting out.  It produces a list of directories and files
+to create/upload (transfer files from the local PC to the web host) and/or create/download (transfer files
+from the web host to the local PC).  It just attempts to make the two copies contain the same files and 
+directories.  It is useful to
+get an initial download of a website either to compare with an old copy or to start making changes to an
+existing web site for which no local PC copy exists.  During this transfer a record is made of the size
+and date of each local PC file for use later.  Note, that while the directories on the web host may be
+created or deleted to mimic the directories on the PC version of the site, new directories on the PC may
+only be created on the PC to mimic the directories that appear on the web host.
+</p>
+
+<p>
+The size/date comparison is useful when updating local PC files wherein the local PC files and web host
+files started out identical (even though the date and sizes may not be identical the content is).  Thus
+make a spelling change in one or more of the local PC files and use SFTP size/date comparison to upload
+only those files that have changed since the last update.  Directories are either present or absent and
+that information is used to create or delete directories on the web host.  Furthermore, files that are
+added in directories that are not on the web host are added after the directories are created.
+</p>
+
+<p>
+The size/date comparison results in two operations:
+</p>
+<ul>
+  <li>Upload a file that has changed on the local PC</li>
+  <li>Delete a file on the host that has been removed from the list of files on the local PC</li>
+</ul>
+
+<p>
+Now having described the comparisons please note that the comparisons only create an update list of the 
+files that need updating  The Update command is used implement the operations.  The update command opens 
+a dialog box so that the user must confirm every update.  Of course, there is a do-all button too.  Please
+note that adding a file in a non-existent directory will also cause the directory(ies) to be created even
+if the missing directory check box is not selected...
+</p>
+
+<p>
+The implementation involves four lists:
+</p>
+<ul>
+<li>Base line List -- List of directories and files previously updated</li>
+<li>Local PC List -- List of directories and files on the PC from which the web site is built</li>
+<li>Web Host List -- List of directories and files on the web host which product the web site for all to see</li>
+<li>Update List -- List of directories and files to update</li>
+</ul>
+
+<p>
+
+The present/absence comparison clears the Update List and compares the Web Host List and the Local PC List to
+add entries to the Update List.  The size/date comparison clears the Update List and compares the Base Line List 
+and the Local PC List to add entries to the Update List.  During the update operation each update not confirmed in
+the dialog box is removed from the Update List before the operations are performed. 
+</p>
+
+<p>
+There are two different starting states:
+</p>
+<ul>
+<li>One is building a web site from scratch, files on the PC and no files on the web host</li>
+<li>The second on is there are some files on both the PC and Web host.</li>
+</ul>
+
+<p>
+When the web site is identified for the first time or after that when the app starts the Local PC List of the
+web site files is loaded from the PC files.  It will also load the Base Line list.  The first time there is no
+"csv" file containing the "last" base line list os the PC List is copied to the Base Line list.  Thus they
+are exactly the same.  This is a case where the present/absence comparison is useful.  The first thing that is
+done is to populate the Web Host List by examining the web host with the list command and parsing the text
+returned.  This is performed for every directory found at the web host root and below.  Initially there are no 
+files in the web host so there will be no files in the Web Host List.  The present/absence comparison will
+generate put operations for every file on the PC web site representation.  When the update operation is over
+the Base Line List will be saved as a "csv" file in the Roaming directory for the App.
+</p>
+
+<p>
+In the second case there are files on the web host and the PC or there are files on the web host and no
+files on the PC.  This application does not compare the texts, just the size and date, presence and absence.
+With both cases the only comparison that is useful is the presence/absence comparison.  When the web host 
+is empty, the comparison will generate puts for all the files on the PC.  When there are some files
+in both places, however, it will be unclear whether the files on both sites (PC and web host) will be
+the same.  The savest thing is to copy the PC version of the web site so that it can be used later.
+Then use the presence/absence comparison to copy all the files to the PC.  After the update operation
+the base line list will be initialized and saved.  The next step is to perform a difference on every file 
+on the PC version of the web site.  Then a size/date comparison will find any files that need updating.
+</p>
+
+<p>
+After initializing/normalizing the PC version of the web site this application works more like Dreamweaver 
+in that it alerts the user to files that
+need updating on the web site and facilitating the update.
+</p>
+
+<p>
+SFTP implements a few simple operations describe under
 <a href="Operations.htm">operations</a>.
 </p>
 <!-- InstanceEndEditable -->

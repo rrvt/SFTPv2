@@ -16,6 +16,7 @@ Byte* p;
 
           void      clear();
           void      expunge();
+          bool      isEmpty() {return !n;}
 
           bool      alloc(ulong nBytes);
 

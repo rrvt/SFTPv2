@@ -15,28 +15,61 @@
 <div class="container">
 <div class="content">
 <!-- InstanceBeginEditable name="Title" -->
-<h1>App Template Operations</h1>
+<p>SFTP Operations</p>
 <!-- InstanceEndEditable -->
 
 <!-- InstanceBeginEditable name="Body" -->
-<h2><img src="Images/NewFile.jpg" width="16" height="15"> New File</h2>
+<h2><img src="Images/FileTree.jpg" width="16" height="15"> Create Web Site Database</h2>
 <p>
-Placeholder only, does nothing useful.
+Bring up a dialog box to create a representation of a web site suitable for managing the transfer of files
+between the PC and the web host.
+</p>
+<h2><img src="Images/OpenFile.jpg" width="16" height="15"> Pick the Web Site to Manage</h2>
+<p>
+Lists all the web sites that are managed on this PC and allows the user to pick one.
+</p>
+<h2><img src="Images/FileTreeEdit.jpg" width="16" height="15"> Edit the Current Web Site Details</h2>
+<p>
+Brings up the dialog box with the currently selected web site so that the details may be changed.
+</p>
+<h2><img src="Images/BeforeAfter.jpg" width="16" height="15"> Compare Web Host and Local PC Files</h2>
+<p>
+Determine the list of directories and files on the web host and compare them to the local PC files.
+Using the presence and absense of directories and files in those list determine the files to upload to
+the host and download to the PC.  Add the files that need updating to the Update List.  The actual transfers are done by
+the Update command.  </p>
+<h2><img src="Images/Comparison.jpg" width="16" height="15"> Compare Local PC Files With Last Transaction Size and Date</h2>
+<p>
+Each time an Upload or download occurs the size and date of the local PC files is saved.  When 
+a change to a file is made the date and/or the size of a local PC file changes.  This comparison 
+is used to determine the files to be added to the Update List for uploading to or deleting from 
+the web host.  
+</p>
+<h2><img src="Images/Update.jpg" width="16" height="15"> Update Web Host and/or Local Site</h2>
+<p>
+A dialog box is presented with a list of operations and entity descriptions.  A check box accompanies each
+line.  The user must indicate which operations are to be performed by selecting one or more check boxes.
+There is an update all button.  
+</p>
+<h2><img src="Images/eye.jpg" width="16" height="15"> Display one of the File/Directory Lists Drop Down Menu</h2>
+<ul>
+<li>Display Base Line List</li>
+<li>Display Local Site Directories and Files</li>
+<li>Display Web Host Site Directories and Files</li>
+</ul>
+<p>
+Produces an indented list of directories and files to represent the files as they appear on the specific 
+list.  
 </p>
 
-<h2><img src="Images/OpenFile.jpg" width="16" height="15"> Open File</h2>
+<h2><img src="Images/Floppy.jpg" width="16" height="15"> Save File Menu</h2>
 <p>
-Opens a file and displays it in the window.  Scroll bar works to see the whole file.
-</p>
-
-<h2><img src="Images/Floppy.jpg" width="16" height="15"> Save File</h2>
-<p>
-Displays a Save File Dialog and saves the file to the file named.
+Displays a Save File Dialog and saves the content of the window to the file to the file named.
 </p>
 
 <h2><img src="Images/Printer.jpg" width="16" height="15"> Print</h2>
 <p>
-Will do all the normal things to print a file.
+Will do all the normal things to print the content of the window.
 </p>
 
 <h2><img src="Images/Options.jpg" width="16" height="15"> Options</h2>
@@ -53,14 +86,19 @@ the output information.  There is a standard about box dialog in the Library.
 
 <h2><img src="Images/Exit.jpg" width="16" height="15"> Exit</h2>
 <p>
-Exit the application with no reservations.
+Exit the application with no reservations.</p>
+<h2>Menu: File</h2>
+<h3>Delete Site Details</h3>
+<p>
+When a Web Site becomes redundant one may wish to remove the details of that web site from this application.  This is done by Opening the web site normally either by using the Pick Web Site or because it is the default web site.  Then choose
+this command to delete all references to it from this application.
+</p>
+<p>
+A dialog box will appear to be sure you really mean to
+delete it, answer yes and it will be gone.
 </p>
 
-<h2>Menu Tools/Test</h2>
-<h3>Test</h3>
-<p>
-Executes a command which outputs "Hello World" to the display.  This can be output using the Save as Command.
-</p>
+
 <!-- InstanceEndEditable -->
 </div><!-- end .content -->
 </div><!-- end .container -->

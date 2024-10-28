@@ -4,12 +4,12 @@
 #include "pch.h"
 #include "AppUtilities.h"
 
-
+#if 0
 String& fixLocalPath(String& path)
                           {if (path[path.length() - 1] != _T('\\')) path += _T('\\'); return path;}
 String& fixRemotePath(String& path)
                           {if (path[path.length() - 1] != _T('/'))  path += _T('/');  return path;}
-
+#endif
 
 String removeSpaces(TCchar* name) {
 String s = name;
@@ -17,7 +17,7 @@ int    pos;
 String t;
 
   for (pos = s.find(_T(' ')); pos >= 0; pos = s.find(_T(' ')))
-                                                           {t += s.substr(0, pos);   s = s.substr(pos+1);}
+                                                    {t += s.substr(0, pos);   s = s.substr(pos+1);}
   t += s;   return t;
   }
 

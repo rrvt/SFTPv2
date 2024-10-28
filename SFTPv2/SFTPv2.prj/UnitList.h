@@ -72,6 +72,10 @@ private:
 
   void          checkForDel(UnitList& newDscs);
 
+  void          displayOneDir(TCchar* dirPath);
+  TCchar*       findNextDir(TCchar* dirPath);
+  int           countSlashes(TCchar* path);
+
   UnitDsc*      datum(int i) {return 0 <= i && i < nData() ? data[i].p : 0;}
 
   void          removeDatum(int i) {if (0 <= i && i < nData()) data.del(i);}
@@ -84,19 +88,4 @@ extern UnitList baseLineList;             // Representation of WebDirList after 
 extern UnitList localDirList;             // List of files and directories on local PC
 extern UnitList webDirList;               // List of files and directories on the remote host
 extern UnitList updateList;               // List of files and directories to update next
-
-
-//  void      startFromWeb(TCchar* path);
-//  void      fromWeb(TCchar* path);
-
-// returns either a pointer to data (or datum) at index i in array or zero
-//extern UnitList updateFileDscs;
-//  void          setCheck();
-
-//UnitDsc* bSearchxx(UnitKey& key);   // Debugging
-//bool          load(CSVLex& lex);
-
-//bool          updateFromPC();
-//  void          update(UnitList& curDscs);
-//  void          updateDel(UnitList& curDscs);
 

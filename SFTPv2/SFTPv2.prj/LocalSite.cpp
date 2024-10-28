@@ -19,13 +19,28 @@ static TCchar* LocalPathKey   = _T("Path");
 
 
 bool LocalSite::load(TCchar* sect) {
-   if (!iniFile.read(sect, LocalPathKey, root, _T(""))) return false;
+String s;
 
-  fixLocalPath(root);   return true;
+  if (!iniFile.read(sect, LocalPathKey, s, _T(""))) return false;
+
+  pathXform.set(s);   return true;
   }
 
 
-bool LocalSite::save(TCchar* sect) {return iniFile.write(sect, LocalPathKey, root);}
+bool LocalSite::save(TCchar* sect) {return iniFile.write(sect, LocalPathKey, pathXform.get());}
+
+
+bool LocalSite::loadTransport(TCchar* relPath)
+                                            {return doc()->loadXfrBuffer(fullFilePath(relPath));}
+
+
+bool LocalSite::storTransport(TCchar* relPath) {
+String path = fullFilePath(relPath);
+
+  if (!createDir(relPath)) return false;
+
+  return doc()->storeXfrBuffer(path);
+  }
 
 
 bool LocalSite::createDir(TCchar* relPath) {
@@ -34,7 +49,7 @@ String stk[16];
 int    stkX = 0;
 String right;
 
-  while (!path.isEmpty() && path != root) {
+  while (!path.isEmpty()) {
     if (createDirectory(path) || !rmvLastDir(path, right, _T('\\'))) break;
 
     stk[stkX++] = right;
@@ -55,18 +70,73 @@ UnitDsc ud;
   }
 
 
+String& LocalSite::fullDirPath( TCchar* relPath)
+                                  {return pathXform.toLocal(pathXform.toFull(::getPath(relPath)));}
+String& LocalSite::fullFilePath(TCchar* relPath)
+                                  {return pathXform.toLocal(pathXform.toFull(relPath));}
 
-bool LocalSite::loadTransport(TCchar* relPath)
-  {return doc()->loadXfrBuffer(fullFilePath(relPath));}
 
 
-bool LocalSite::storTransport(TCchar* relPath) {
-bool rslt = doc()->storeXfrBuffer(fullFilePath(relPath));
+bool LocalSite::getPath() {
+String path;
 
-  closeTransport();   return rslt;
+  iniFile.readString(GlobalSect, LocalPathStart, path);
+
+  if (!getDirPathDlg(_T("Web Site"), path)) return false;
+
+  pathXform.set(path);
+
+  iniFile.writeString(GlobalSect, LocalPathStart, pathXform.get());   return true;
   }
 
 
+void LocalSite::getAttr(TCchar* relPath, int& size, Date& date) {
+String path = fullFilePath(relPath);
+FileIO lu;
+CTime  time;
+
+  if (lu.open(path, FileIO::Read)) {
+
+    size = lu.getLength();
+
+    if (lu.getModifiedTime(time)) date = time;
+    else                          date.getToday();
+
+    lu.close();
+    }
+
+  else {size = 1; date.getToday();}
+  }
+
+
+
+
+
+//-----------------------------
+
+#if 0
+// Returns a relative local address
+
+String&  LocalSite::toRelative(TCchar* fullPath) {
+  path = fullPath;
+
+  if (path.find(root) == 0) path = path.substr(root.length());
+
+  return path;
+  }
+#endif
+
+#if 1
+#else
+  if (createDirectory(path)) return true;
+
+  for (rslt = rmvLastDir(path, right, _T('\\')), stkX = 0; rslt;
+                                                        rslt = rmvLastDir(path, right, _T('\\'))) {
+    stk[stkX++] = right;   if (createDirectory(path)) break;
+    }
+#endif
+#if 1
+#else
 String& LocalSite::fullDirPath(TCchar* relPath) {return fullFilePath(::getPath(relPath));}
 
 
@@ -87,61 +157,5 @@ String prefix;
 
   return path;
   }
-
-
-bool LocalSite::getPath() {
-String path;
-
-  iniFile.readString(GlobalSect, LocalPathStart, path);
-
-  if (!getDirPathDlg(_T("Web Site"), path)) return false;
-
-  root = fixLocalPath(path);
-
-  iniFile.writeString(GlobalSect, LocalPathStart, root);   return true;
-  }
-
-
-void LocalSite::getAttr(TCchar* relPath, int& size, Date& date) {
-String path = root + relPath;
-FileIO lu;
-CTime  time;
-
-  if (lu.open(path, FileIO::Read)) {
-
-    size = lu.getLength();
-
-    if (!lu.getModifiedTime(time)) date.getToday();   date = (CTime) time;
-
-    lu.close();
-    }
-
-  else {size = 1; date.getToday();}
-  }
-
-
-
-// Returns a relative local address
-
-String&  LocalSite::toRelative(TCchar* fullPath) {
-  path = fullPath;
-
-  if (path.find(root) == 0) path = path.substr(root.length());
-
-  return path;
-  }
-
-
-
-//-----------------------------
-
-#if 1
-#else
-  if (createDirectory(path)) return true;
-
-  for (rslt = rmvLastDir(path, right, _T('\\')), stkX = 0; rslt;
-                                                        rslt = rmvLastDir(path, right, _T('\\'))) {
-    stk[stkX++] = right;   if (createDirectory(path)) break;
-    }
 #endif
 

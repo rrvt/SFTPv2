@@ -2,7 +2,7 @@
 
 
 #pragma once
-#include "Expandable.h"
+#include "ExpandableP.h"
 #include "IterT.h"
 #include "Utilities.h"
 
@@ -31,11 +31,12 @@ private:
 
 
 class DirList;
+typedef DatumPtrT<DirItem, int> DirItemP;
 typedef IterT<DirList, DirItem> DLIter;
 
 class DirList {
 
-Expandable<DirItem, 2> data;
+ExpandableP<DirItem, int, DirItemP, 2> data;
 
 public:
 
@@ -53,7 +54,7 @@ private:
 
   // returns either a pointer to datum at index i in array or zero
 
-  DirItem* datum(int i) {return 0 <= i && i < nData() ? &data[i] : 0;}
+  DirItem* datum(int i) {return 0 <= i && i < nData() ? data[i].p : 0;}
 
   void     removeDatum(int i) {if (0 <= i && i < nData()) data.del(i);}
 

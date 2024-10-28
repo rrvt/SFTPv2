@@ -12,9 +12,5 @@
 		<param name="Name" value="Introduction">
 		<param name="Local" value="Introduction.htm">
 		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="App Template Operations">
-		<param name="Local" value="Operations.htm">
-		</OBJECT>
 </UL>
 </BODY></HTML>

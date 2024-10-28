@@ -14,8 +14,6 @@ extern TCchar* LastSiteKey;
 
 class Site : public LocalSite {
 
-//static volatile UnitDsc* lastDsc;
-
 public:
 
 String name;
@@ -33,16 +31,15 @@ String name;
   bool    loadData(String& sect);            // Load from iniFile
   bool    saveData();                        // save to iniFile
 
+  bool    pick();
   bool    edit();
+  void    remove();
 
   void    update();
   LRESULT finUpdate(WPARAM wparam, LPARAM lParam);
   void    display(UnitList& ul);
 
-  String  dataFileName();
-
   String  toFull(TCchar* relPath, bool isWeb);          // Returns a full path from a local
-  String& normalizePath(TCchar* path) {return LocalSite::toLocal(path);}
 
 private:
 
@@ -58,3 +55,12 @@ private:
 
 
 extern Site site;
+
+
+
+// ---------------------------------
+
+//  String& normalizePath(TCchar* path) {return LocalSite::toLocal(path);}
+
+//static volatile UnitDsc* lastDsc;
+

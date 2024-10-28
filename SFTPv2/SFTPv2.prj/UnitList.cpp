@@ -252,6 +252,8 @@ int i;
 
     if (!unitDsc.load(lex)) return i > 0;
 
+    if (unitDsc.key.path.isEmpty() || unitDsc.name.isEmpty()) continue;
+
     add(unitDsc);
     }
   }
@@ -278,15 +280,99 @@ void UnitList::display(TCchar* title) {
 UnitListIter iter(*this);
 UnitDsc*     ud;
 
-  notePad << nClrTabs << nSetRTab(32) << nSetRTab(43) << nSetTab(45) << nCrlf;
+  notePad << nClrTabs << nSetTab(1) << nSetRTab(45) << nSetRTab(60);
 
-  notePad << nBeginLine << title;
-  notePad << nTab << nData() << nEndLine << nCrlf << nCrlf;
+  notePad << nTab << nBeginLine << title;
+  notePad << nTab << nData() << nEndLine << nCrlf;
 
-  for (ud = iter(); ud; ud = iter++) ud->display();
+  displayOneDir(_T(""));
+
+  for (ud = iter(); ud; ud = iter++) if (ud->key.dir) {displayOneDir(ud->relPath);   break;}
   }
 
 
+void UnitList::displayOneDir(TCchar* dirPath) {
+String       path = dirPath;
+UnitListIter iter(*this);
+UnitDsc*     ud;
+int          indent = countSlashes(path) * 3 + 1;
+String       title = path;   if (path.isEmpty()) title = _T("<root>");
+
+  notePad << nCrlf;
+  notePad << nClrTabs << nSetTab(indent) << nSetRTab(45) << nSetRTab(60);
+  notePad << nTab << nBeginLine << title << nEndLine << nCrlf;
+
+  for (ud = iter(); ud; ud = iter++) if (!ud->key.dir && ud->relPath == path)
+                                                                {notePad << nTab;   ud->display();}
+
+  if (dirPath = findNextDir(path)) {path = dirPath;   displayOneDir(path);}
+  }
+
+
+TCchar* UnitList::findNextDir(TCchar* dirPath) {
+UnitListIter iter(*this);
+UnitDsc*     ud;
+
+  for (ud = iter(); ud; ud = iter++) if (ud->key.dir && ud->key.path == dirPath)
+                                       {ud = iter++;   return ud->key.dir ? ud->relPath.str() : 0;}
+  return 0;
+  }
+
+
+int UnitList::countSlashes(TCchar* path) {
+String s = path;
+int    i;
+int    n;
+int    count;
+
+  for (i = 0, n = s.length(), count = 0; i < n; i++) if (s[i] == _T('\\')) count++;
+
+  return count;
+  }
+
+
+
+#if 0
+
+// Tabbed Directory Display
+
+void WebFiles::display() {
+
+  notePad << nBeginLine << rootNode.path << nEndLine << nCrlf;
+
+  displayOne(rootNode, 1);
+  }
+
+
+void WebFiles::displayOne(WebNode& webNode, int tab) {
+WebNodeIter iter(webNode);
+WebItem*    item;
+int         indent = tab * 3;
+
+  notePad << nClrTabs << nSetTab(indent) << nSetRTab(45);
+
+  for (item = iter(); item; item = iter++) {
+    if (item->typ == WebFileType) {
+      notePad << nTab << item->name << nTab << item->size << nCrlf;
+      }
+    }
+
+  for (item = iter(); item; item = iter++) {
+    if (item->typ == WebDirType) {
+
+      WebNode& node = *item->node;
+
+      notePad << nClrTabs << nSetTab(indent) << nSetRTab(45);
+      notePad << nCrlf << nTab << nBeginLine << node.path << nEndLine << nCrlf;
+
+      displayOne(node, tab+1);
+      }
+    }
+  }
+
+
+
+#endif
 
 void UnitList::logSelected(TCchar* title) {
 #if 0

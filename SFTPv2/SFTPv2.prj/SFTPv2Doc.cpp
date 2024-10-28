@@ -14,11 +14,12 @@
 #include "SFTPv2View.h"
 #include "UnitList.h"
 #include "UpdateDlg.h"
-#include "workerThrd.h"
+#include "Utilities.h"
+#include "WorkerThrd.h"
 
 //#include "PickTransaction.h"            // *** Debug ***
 
-static TCchar* MyPassword = _T("SFTPv2App");
+static TCchar* MyPassword = _T("F*4a6qOhe*5ws1W^SFTPv2Apphl8ct6tL$8%TUo#b");
 
 
 // SFTPv2Doc
@@ -30,14 +31,18 @@ BEGIN_MESSAGE_MAP(SFTPv2Doc, CDoc)
   ON_COMMAND(ID_NewSite,          &onNewSite)
   ON_COMMAND(ID_PickSite,         &onPickSite)
   ON_COMMAND(ID_EditSite,         &onEditSite)
+  ON_COMMAND(ID_DeleteSite,       &onDeleteSite)
+
   ON_COMMAND(ID_CompSites,        &onCompSites)
   ON_COMMAND(ID_CompPrev,         &onCompPrevious)
 
   ON_COMMAND(ID_Update,           &onUpdate)
-  ON_COMMAND(ID_ViewDetails,      &onViewDetails)
 
-  ON_COMMAND(ID_TBSaveMenu,       &onSaveFile)
-  ON_COMMAND(ID_SaveFile,         &onSaveFile)
+  ON_COMMAND(ID_DisplayList,      &onDspBaseList)
+  ON_COMMAND(ID_DspBaseList,      &onDspBaseList)
+  ON_COMMAND(ID_DspLclList,       &onDspLclList)
+  ON_COMMAND(ID_DspRmtList,       &onDspRmtList)
+
   ON_COMMAND(ID_SaveNotePad,      &onSaveNotePad)
 
   ON_COMMAND(ID_EDIT_COPY,        &onEditCopy)
@@ -47,7 +52,7 @@ END_MESSAGE_MAP()
 
 // SFTPv2Doc construction/destruction
 
-SFTPv2Doc::SFTPv2Doc() noexcept : dataSource(NotePadSrc), cngBlk(0) { }
+SFTPv2Doc::SFTPv2Doc() noexcept : dataSource(NotePadSrc), cngBlock(), cngFileFound(true) { }
 
 SFTPv2Doc::~SFTPv2Doc() { }
 
@@ -62,12 +67,22 @@ String title;
   notePad.clear();    site.clear();
 
   if (site.edit())
-            {site.logout();   site.login();   theApp.setTitle(site.name);   loadSiteDescriptors();}
+                  {site.logout();   site.login();   theApp.setTitle(site.name);   loadSiteLists();}
   display();
   }
 
 
 void SFTPv2Doc::onPickSite() {
+
+  if (isLocked()) return;
+
+  notePad.clear();
+
+  site.pick();
+
+  if (!site.login()) {display();   return;}
+
+  theApp.setTitle(site.name);    loadSiteLists();   display();
   }
 
 
@@ -78,37 +93,68 @@ void SFTPv2Doc::onEditSite() {
   notePad.clear();
 
   if (site.edit())
-            {site.logout();   site.login();   theApp.setTitle(site.name);   loadSiteDescriptors();}
+             {site.logout();   site.login();   theApp.setTitle(site.name);   loadSiteLists();}
   display();
   }
 
 
-bool SFTPv2Doc::loadSiteDescriptors() {
+void SFTPv2Doc::onDeleteSite() {
+String msg;
 
+  if (isLocked() || site.name.isEmpty()) return;
+
+  msg = _T("Remove ") + site.name + _T(" details from the App");
+
+  switch (AfxMessageBox(msg, MB_YESNO)) {
+    case IDYES: break;                                    // The Yes button was selected.
+    default   : return;
+    }
+
+  notePad.clear();
+
+  notePad << _T("Removed ") << site.name;
+  notePad << _T(" details from the App, web site files have not been deleted.") << nCrlf;
+
+  removeFile(pswdPath(site.name));
+  removeFile(baseLinePath(site.name));
+
+  site.remove();
+
+  display();
+  }
+
+
+bool SFTPv2Doc::loadSiteLists() {
 String path;
+
+  clearLists();
 
   if (!localDirList.loadFromPC())
                      {notePad << site.lclRoot() << _T(" does not exist") << nCrlf; return false;}
 
   dataSource = BaseLineSrc;
 
-  if (loadBaseLine() && !baseLineList.isEmpty()) notePad << _T("Base Line list loaded");
+  if (loadBaseLine() && !baseLineList.isEmpty()) notePad << _T("Base Line list loaded") << nCrlf;
   else {
-    baseLineList = localDirList;
+    baseLineList = localDirList;   saveBaseLine();
     notePad << _T("*** Initializing base line list, should only happen once! ***");
     }
 
-  notePad << nCrlf << nCrlf;
+  notePad << nCrlf;
 
-  baseLineList.display(_T("Base Line List"));   return true;
+  dspBaseLineList();   return true;
   }
+
+
+void SFTPv2Doc::clearLists()
+      {baseLineList.clear();   localDirList.clear();    webDirList.clear();    updateList.clear();}
 
 
 void SFTPv2Doc::onCompSites() {
 
   if (isLocked()) return;
 
-  updateList.clear();   site.getRmtDir();
+  updateList.clear();   site.compSites();
 
   display();
   }
@@ -145,6 +191,8 @@ UnitDsc*     rmtUnit;
     }
 
     for ( ; rmtUnit; rmtUnit = rmtIter++) {
+      if (rmtUnit->key.dir) continue;
+
       notePad << _T("0 ... ") << rmtUnit->key.path;
       toUpdate(rmtUnit, GetOp, _T("0== Get: "));   notePad << nCrlf;
       }
@@ -229,19 +277,51 @@ UpdateDlg dlg(updateList);
   }
 
 
-void SFTPv2Doc::onViewDetails() {
+void SFTPv2Doc::onDspBaseList() {
 
   if (isLocked()) return;
 
   notePad.clear();
 
-  notePad << _T("Update List") << nCrlf << nCrlf;
-  site.display(updateList);   notePad << nCrlf;
-
-  notePad << _T("Baseline List") << nCrlf << nCrlf;
-  site.display(baseLineList);
+#if 1
+  dspBaseLineList();
+#else
+  baseLineList.display(_T("Baseline Dir List"));   fileName = _T("BaseLineList.txt");
+#endif
 
   display();
+  }
+
+
+void SFTPv2Doc::dspBaseLineList() {
+  baseLineList.display(_T("Baseline Dir List"));   fileName = _T("BaseLineList.txt");
+  }
+
+
+void SFTPv2Doc::onDspLclList() {
+
+  if (isLocked()) return;
+
+  notePad.clear();
+
+  localDirList.display(_T("Local Dir List"));    fileName = _T("LocalList.txt");
+
+  display();
+  }
+
+
+void SFTPv2Doc::onDspRmtList(){
+
+  if (isLocked()) return;
+
+  if (webDirList.isEmpty()) {site.getRmtSite(); return;}
+
+  dspRmtSite();   display();
+  }
+
+
+void SFTPv2Doc::dspRmtSite() {
+  notePad.clear();   webDirList.display(_T("Remote Dir List"));   fileName = _T("RemoteList.txt");
   }
 
 
@@ -261,7 +341,7 @@ String sect;
 
   if (!site.login())                                {display();   return;}
 
-  if (!loadSiteDescriptors())                       {display();   return;}
+  if (!loadSiteLists())                             {display();   return;}
 
   display();
   }
@@ -270,19 +350,11 @@ String sect;
 void SFTPv2Doc::onEditCopy() {clipLine.load();}
 
 
-void SFTPv2Doc::onSaveFile() {
-
-  if (isLocked()) return;
-
-//  if (!saveBaseLine()) notePad << _T("CSV file not saved: ") << nCrlf;
-
-  display();
-  }
-
-
 void SFTPv2Doc::onSaveNotePad() {
 
   if (isLocked()) return;
+
+  pathDlgDsc(_T("NotePad"), fileName, _T("txt"), _T("*.txt"));
 
   dataSource = NotePadSrc;   if (setSaveAsPath(pathDlgDsc)) OnSaveDocument(path);
 
@@ -293,27 +365,83 @@ void SFTPv2Doc::onSaveNotePad() {
 void SFTPv2Doc::display(DataSource ds) {dataSource = ds; invalidate();}
 
 
-void SFTPv2Doc::loadCNG(CNGblock& cng) {
-String path = pswdPath();
+bool SFTPv2Doc::loadNamePassword(TCchar* siteName, String& name, String& pswd) {
 
-  cngBlk = &cng;   dataSource = NamePswdSrc;   if (OnOpenDocument(path)) return;
+  if (!getCNG(siteName) && !openCNG(siteName)) return false;
 
-  pathDlgDsc(_T("Site Password Data"), path, _T("cng"), _T("*.cng"));
+  if (!cngFileFound) {cngBlk = &cngBlock;  saveCNG(siteName);}
 
-  if (!setOpenPath(pathDlgDsc)) return;
-
-  if (!OnOpenDocument(path)) messageBox(_T(" No Password File!"));
+  return parseCng(name, pswd);
   }
 
 
-void SFTPv2Doc::saveCNG(CNGblock* cng) {
-String path = pswdPath();
+bool SFTPv2Doc::getNamePassword( TCchar* siteName, String& name, String& pswd)
+                      {return getCNG(siteName) && parseCng(name, pswd);}
 
-  cngBlk = cng;    dataSource = NamePswdSrc;   if (OnSaveDocument(path)) return;
 
-  pathDlgDsc(_T("Save Password Data"), path, _T("cng"), _T("*.cng"));
+bool SFTPv2Doc::parseCng(String& name, String& pswd) {
+CNG     cng;
+TCchar* tc  = cng(cngBlock, MyPassword);   if (!tc) return false;
+String  np  = tc;
+int     pos = np.find(_T(';'));   if (pos <= 0) {expunge(np); return false;}
+
+  name = np.substr(0, pos);   pswd = np.substr(pos+1);
+
+  cngBlock.expunge();   return true;
+  }
+
+
+bool SFTPv2Doc::getCNG( TCchar* siteName) {
+String sitePath = pswdPath(siteName);
+
+  dataSource = NamePswdSrc;   return cngFileFound = OnOpenDocument(sitePath);
+  }
+
+
+bool SFTPv2Doc::openCNG(TCchar* siteName) {
+String sitePath = pswdPath(siteName);
+
+  pathDlgDsc(_T("Site Password Data"), sitePath, _T("cng"), _T("*.cng"));
+
+  return cngFileFound = setOpenPath(pathDlgDsc) && OnOpenDocument(path);
+  }
+
+
+void SFTPv2Doc::saveNamePassword(TCchar* siteName, TCchar* name, TCchar* pswd) {
+String np = name;   np += _T(";");   np += pswd;
+CNG    cng;
+
+  cngBlk = cng(np, MyPassword);   expunge(np);
+
+  saveCNG(siteName);   cngBlk->expunge();   cngBlk = 0;
+  }
+
+
+void SFTPv2Doc::saveCNG(TCchar* siteName) {
+String sitePath = pswdPath(siteName);
+
+  if (cngBlk->isEmpty()) return;
+
+  dataSource = NamePswdSrc;   if (OnSaveDocument(sitePath)) return;
+
+  pathDlgDsc(_T("Save Password Data"), sitePath, _T("cng"), _T("*.cng"));
 
   if (setSaveAsPath(pathDlgDsc)) OnSaveDocument(path);
+  }
+
+
+bool SFTPv2Doc::loadBaseLine()
+                      {dataSource = BaseLineSrc;   return OnOpenDocument(baseLinePath(site.name));}
+
+
+bool SFTPv2Doc::saveBaseLine()
+                      {dataSource = BaseLineSrc;   return OnSaveDocument(baseLinePath(site.name));}
+
+
+String SFTPv2Doc::mkAppPath(TCchar* name, TCchar* suffix) {
+String s = removeSpaces(name);
+
+  return theApp.roamingPath() + s + suffix;
   }
 
 
@@ -332,20 +460,6 @@ String ttl      = title;    ttl += _T(" Output");
   }
 
 
-bool SFTPv2Doc::loadBaseLine() {
-String s = theApp.roamingPath() + removeSpaces(site.name) + _T(".csv")  ;
-
-  dataSource = BaseLineSrc;   return OnOpenDocument(s);
-  }
-
-
-bool SFTPv2Doc::saveBaseLine() {
-String s = theApp.roamingPath() + removeSpaces(site.name) + _T(".csv")  ;
-
-  dataSource = BaseLineSrc;   return OnSaveDocument(s);
-  }
-
-
 // UglyDoc serialization
 
 void SFTPv2Doc::serialize(Archive& ar) {
@@ -361,7 +475,7 @@ void SFTPv2Doc::serialize(Archive& ar) {
 
   else
     switch(dataSource) {
-      case NamePswdSrc: cngBlk->load(ar);               return;
+      case NamePswdSrc: cngBlock.load(ar);             return;
       case BaseLineSrc: baseLineList.loadFromCSV(ar);   return;
       case WebSrc     : sftpSSL.load(ar);               return; // Load buffer from local file
       default         : return;
@@ -638,4 +752,29 @@ PickTransaction pt;  pt.test();
           updUnit = updateList.add(*lclUnit);   updUnit->unitOp = PutOp;
           notePad << nTab << _T("> Update: ") << updUnit->key.path;
 #endif
+#if 0
+void SFTPv2Doc::loadCNG(TCchar* siteName, CNGblock& blk) {
+
+  if (getCNG(siteName, blk)) return;
+
+  if (!openCNG(siteName, blk)) messageBox(_T(" No Password File!"));
+  }
+#endif
+#if 1
+#else
+CNG      cng;
+TCchar*  tc;
+String   np;
+int      pos;
+  tc = cng(blk, MyPassword);   if (!tc) return false;
+
+  np = tc;   pos = np.find(_T(';'));   if (pos <= 0) return false;
+
+  name = np.substr(0, pos);   pswd = np.substr(pos+1);
+
+  blk.expunge();   return true;
+#endif
+
+//  notePad << nTab << nBeginLine << title;
+//  notePad << nTab << nData() << nEndLine << nCrlf;
 

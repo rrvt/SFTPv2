@@ -49,6 +49,7 @@ class UnitDsc {
 public:
 
 UnitKey key;
+String  relPath;                // path relative to root, e.g. "mumble\george\"
 String  name;                   // Name of file, <name>.<ext>
 int     size;
 Date    date;
@@ -90,8 +91,8 @@ UnitOp  unitOp;
 private:
 
   void copy(UnitDsc& ud) {
-    name  = ud.name;    key    = ud.key;      size  = ud.size;
-    date  = ud.date;    unitOp = ud.unitOp;
+    relPath = ud.relPath;   name  = ud.name;    key    = ud.key;
+    size    = ud.size;      date  = ud.date;    unitOp = ud.unitOp;
     }
   };
 

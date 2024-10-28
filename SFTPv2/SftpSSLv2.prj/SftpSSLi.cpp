@@ -31,38 +31,6 @@ bool SftpSSLi::open(TCchar* host) {
   }
 
 
-#if 0
-
-
-void SftpOps::closeSSL(int& cnt) {
-int rslt;
-
-  if (ssl) {
-
-    rslt = SSL_shutdown(ssl);   cnt++;
-
-    if (rslt == 0 && cnt < 2) {closeSSL(cnt);  return;}
-
-    SSL_free(ssl);
-    }
-
-  if (ctx) SSL_CTX_free(ctx);
-
-  ssl = 0;   ctx = 0;   sbio = 0;   clear();   lastOp = NilOp;
-  }
-
-
-void SftpOps::closeSkt() {
-
-  if (!skt) return;
-
-  if (lastOp == WriteOp) {if (shutdown(skt, SD_SEND)) err.wsa(_T("Shutdown"));   read();}
-
-  closesocket(skt);   skt = 0;
-  }
-#endif
-
-
 void SftpSSLi::close() {closeSSL();   SftpSocket::close();}
 
 
@@ -84,7 +52,6 @@ int i;
   }
 
 
-
 SSL* SftpSSLi::getNewSSL() {
 
   if (ssl)                   return ssl;
@@ -96,7 +63,6 @@ SSL* SftpSSLi::getNewSSL() {
 
   return SSL_new(ctx);
   }
-
 
 
 SSLRslt SftpSSLi::connect() {
@@ -159,11 +125,12 @@ ToAnsi buf(s);   return write(buf(), buf.length()) == buf.length();}
 int SftpSSLi::write(Cchar* buf, int noBytes) {
 int n;
 
+  if (!ssl) return 0;
+
   n = SSL_write(ssl,  buf, noBytes);
 
   return sslRslt(ssl, n) ? n : 0;
   }
-
 
 
 bool SftpSSLi::readRsp(int code) {
@@ -225,6 +192,8 @@ int    size = sizeof(FtpBfr);
 size_t n;
 int    rslt;
 
+  if (!ssl) return SSLfalse;
+
   setTimeout(5);
 
   rslt = SSL_read_ex(ssl, bfr + blk.n, size - blk.n, &n);
@@ -262,4 +231,34 @@ bool         rslt;
 #endif
 //String s = cmd;  if (args) {s += _T(' ');   s += args;}
 //#include "SftpDataIter.h"
+#if 0
+
+
+void SftpOps::closeSSL(int& cnt) {
+int rslt;
+
+  if (ssl) {
+
+    rslt = SSL_shutdown(ssl);   cnt++;
+
+    if (rslt == 0 && cnt < 2) {closeSSL(cnt);  return;}
+
+    SSL_free(ssl);
+    }
+
+  if (ctx) SSL_CTX_free(ctx);
+
+  ssl = 0;   ctx = 0;   sbio = 0;   clear();   lastOp = NilOp;
+  }
+
+
+void SftpOps::closeSkt() {
+
+  if (!skt) return;
+
+  if (lastOp == WriteOp) {if (shutdown(skt, SD_SEND)) err.wsa(_T("Shutdown"));   read();}
+
+  closesocket(skt);   skt = 0;
+  }
+#endif
 

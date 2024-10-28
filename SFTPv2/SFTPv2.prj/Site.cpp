@@ -11,7 +11,8 @@
 #include "Resource.h"
 #include "SFTPv2.h"
 #include "SFTPv2Doc.h"
-#include "SiteLoginDlg.h"
+#include "SiteDetailsDlg.h"
+#include "SitePickerDlg.h"
 #include "UnitList.h"
 #include "Utilities.h"
 #include "WorkerThrd.h"
@@ -23,12 +24,24 @@ static UINT updateThrd(   void* param);             // Thread for processing an 
 
 TCchar* GlobalSect  = _T("Global");
 TCchar* LastSiteKey = _T("LastSite");
-TCchar* MyPassword  = _T("Secure File Transfer Protocol v2");
 
 static TCchar* SiteNameKey = _T("SiteName");                    // IniFile key words
 
 
 Site site;
+
+
+// Pick a site for a list of site the application knows and load it
+
+bool Site::pick() {
+SitePickerDlg dlg(name);
+
+  if (dlg.DoModal() != IDOK) return false;
+
+  site.logout();   site.clear();
+
+  name = dlg.section;   return loadData(name) && setLastSite();
+  }
 
 
 bool Site::setLastSite() {
@@ -69,40 +82,38 @@ String pwd;
 bool Site::edit() {
 String       userID;
 String       pswd;
-SiteLoginDlg dlg;
-String       np;
-String       path;
-CNG          cng;
-CNGblock*    cngBlk;
+SiteDetailsDlg dlg;
 int          pos;
 
   dlg.name = name;   dlg.rootTxt = site.lclRoot();   dlg.urlName = url;
   dlg.remoteRoot = site.rmtRoot();
 
-  if (getNmPswd(userID, pswd)) {dlg.userID = userID;   dlg.password = pswd;}
-
   if (dlg.DoModal() == IDOK) {
 
-    if (dlg.userID.find(_T(';')) >= 0)
-                                     {messageBox(_T("Name may not include a ';'"));  return false;}
     name = dlg.name;   site.lclRoot() = dlg.rootTxt;   url = dlg.urlName;   url.trim();
 
     pos = url.find(_T("ftp."));   if (pos >= 0) url = url.substr(pos+4);
 
-    site.setRmtRoot(dlg.remoteRoot);   name = ensureSite(name);
+    site.setRmtRoot(dlg.remoteRoot);
 
-    np = dlg.userID + _T(";") + dlg.password;
+    doc()->saveNamePassword(site.name, dlg.userID, dlg.password);
+    expunge(dlg.userID);   expunge(dlg.password);
 
-    cngBlk = cng(np, MyPassword);
-
-    expunge(np);
-    expunge(dlg.userID);
-    expunge(dlg.password);
-
-    doc()->saveCNG(cngBlk);    cngBlk->expunge();   return site.saveData();
+    return site.saveData();
     }
 
   return false;
+  }
+
+
+void Site::remove() {
+  iniFile.deleteSection(name);
+  iniFile.deleteString(GlobalSect, LastSiteKey);
+  baseLineList.clear();
+  localDirList.clear();
+  webDirList.clear();
+  updateList.clear();
+  clear();
   }
 
 
@@ -175,16 +186,13 @@ String path;
 void Site::get(UnitDsc& ud) {
 UnitDsc* dsc;
 
-  if (!LocalSite::createDir(ud.key.path)) return;
+  if (RemoteSite::get(ud.key.path)) {
 
-  if (!RemoteSite::loadTransport(ud.key.path)) return;
+    getAttr(ud.key.path, ud.size, ud.date);   ud.unitOp = GetDone;
 
-  if (!LocalSite::storTransport(ud.key.path)) return;
-
-  getAttr(ud.key.path, ud.size, ud.date);   ud.unitOp = GetDone;
-
-  dsc = baseLineList.add(ud);   dsc->unitOp = NilOp;
-  dsc = localDirList.add(ud);   dsc->unitOp = NilOp;
+    dsc = baseLineList.add(ud);   dsc->unitOp = NilOp;
+    dsc = localDirList.add(ud);   dsc->unitOp = NilOp;
+    }
 
   sendStepPrgBar();
   }
@@ -194,16 +202,13 @@ UnitDsc* dsc;
 void Site::put(UnitDsc& ud) {
 UnitDsc* dsc;
 
-  if (!RemoteSite::createDir(ud.key.path)) return;
+  if (RemoteSite::put(ud.key.path)) {
 
-  if (!LocalSite::loadTransport(ud.key.path)) return;
+    ud.unitOp = PutDone;
 
-  if (!RemoteSite::storTransport(ud.key.path)) return;
-
-  ud.unitOp = PutDone;
-
-  if (!webDirList.isEmpty()) {dsc = webDirList.add(ud);  dsc->unitOp = NilOp;}
-  dsc = baseLineList.add(ud);   dsc->unitOp = NilOp;
+    dsc = webDirList.add(ud);     dsc->unitOp = NilOp;
+    dsc = baseLineList.add(ud);   dsc->unitOp = NilOp;
+    }
 
   sendStepPrgBar();
   }
@@ -291,18 +296,6 @@ String       op;
   notePad << nCrlf;
 
   sendDisplayMsg();
-  }
-
-
-String Site::dataFileName() {
-String s = name;
-String t;
-int    pos;
-
-  for (pos = s.find(' '); pos >= 0; pos = s.find(_T(' '))) {
-    t += s.substr(0, pos);   s = s.substr(pos+1);
-    }
-  return t + s;
   }
 
 
@@ -400,5 +393,35 @@ String localPath;
   localPath = LocalSite::getPath(ud.key.path);
 
   if (!doc()->loadXfrBuffer(localPath)) return;
+#endif
+#if 0
+  if (doc()->loadNamePassword(site.name, userID, pswd))
+                                                      {dlg.userID = userID;   dlg.password = pswd;}
+#endif
+#if 1
+#else
+String       np;
+String       path;
+CNG          cng;
+CNGblock*    cngBlk;
+
+    np = dlg.userID + _T(";") + dlg.password;
+
+    cngBlk = cng(np, MyPassword);
+
+    expunge(np);
+    expunge(dlg.userID);
+    expunge(dlg.password);
+
+    doc()->saveCNG(site.name, cngBlk);   cngBlk->expunge();
+#endif
+//TCchar* MyPassword  = _T("Secure File Transfer Protocol v2");
+#if 1
+#else
+  if (!RemoteSite::createDir(ud.key.path)) return;
+
+  if (!LocalSite::loadTransport(ud.key.path)) return;
+
+  if (!RemoteSite::storTransport(ud.key.path)) return;
 #endif
 

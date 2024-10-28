@@ -6,8 +6,8 @@
 #include "Resource.h"
 
 
-String& fixLocalPath( String& path);          // Add '\' to end of path
-String& fixRemotePath(String& path);          // Add '/' to end of path
+//String& fixLocalPath( String& path);          // Add '\' to end of path
+//String& fixRemotePath(String& path);          // Add '/' to end of path
 
 String  removeSpaces(TCchar* name);
 

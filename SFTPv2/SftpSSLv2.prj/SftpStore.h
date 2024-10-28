@@ -17,7 +17,6 @@ typedef IterT<SftpStore, SftpBlock> SftpStrIter;  // Iterator over array of Datu
 class SftpStore {
 protected:
 
-SSLFileType                              fileType;
 ExpandableP<SftpBlock, int, SftpBlkP, 2> data;
 
 public:
@@ -26,14 +25,12 @@ String lastResp;
 Tchar  lastCh;
 
 
-  SftpStore() : fileType(NilFlTyp) { }
+  SftpStore() { }
  ~SftpStore() {clear();}
 
-  void clear() {data.clear();   fileType = NilFlTyp;   clearLast();}
+  void clear() {data.clear();   clearLast();}
 
   SftpStore& operator -= (SftpStore& store);
-
-  void setType(SSLFileType typ) {fileType = typ;}
 
   int  nData() {return data.end();}     // returns number of data items in array
 
@@ -54,6 +51,5 @@ private:
   void  removeDatum(int i) {if (0 <= i && i < nData()) data.del(i);}
 
   friend typename SftpStrIter;
-//  friend class    SftpTransport;
   };
 

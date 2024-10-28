@@ -24,19 +24,28 @@ int wsaErr = WSAStartup(MAKEWORD(2, 2), &wsa);              // Required in Windo
   }
 
 
-// Opens Socket to site
-
-bool SftpSSL::open(TCchar* host) {return sftpSSLi.open(host);}
-
-
 void SftpSSL::close() {sftpSSLi.close();   sftpTransport.close();}
 
 
-bool SftpSSL::login(TCchar* userId, TCchar* password) {
+bool SftpSSL::login(TCchar* host, TCchar* userId, TCchar* password) {
+
+  if (!open(host)) return false;
 
   if (!sftpSSLi.sendCmd(_T("USER"), userId, 331)) return false;
                                                             // 331 - User name okay, need password
   return sftpSSLi.sendCmd(_T("PASS"), password, 230);       // 230 - User logged in, proceed.
+  }
+
+
+// Opens Socket to site
+
+bool SftpSSL::open(TCchar* host) {
+int  i;
+bool rslt;
+
+  for (i = 0, rslt = sftpSSLi.open(host); i < 2 && !rslt; i++, rslt = sftpSSLi.open(host))
+                                                                                          continue;
+  return rslt;
   }
 
 
@@ -91,10 +100,7 @@ int    pos2;
 bool SftpSSL::cwd(TCchar* dir) {
 int    i;
 
-  for (i = 0; i < Retries && !sftpSSLi.sendCmd(_T("CWD"), dir, 250); i++)
-    Sleep(10);
-
-notePad << _T("Tries: ") << i << nCrlf;
+  for (i = 0; i < Retries && !sftpSSLi.sendCmd(_T("CWD"), dir, 250); i++) Sleep(10);
 
   return i < Retries;
   }
@@ -136,25 +142,6 @@ int    i;
 // Return true when file is deleted, else return false
 
 bool SftpSSL::del(TCchar* webPath) {return sftpSSLi.sendCmd(_T("DELE"), webPath, 250);}
-
-
-// Returns true when the Unix like directory list (each line contains a line for each entity in the
-// current directory.  The data is stored in the data store which can be read later.
-
-bool SftpSSL::list(TCchar* path, TCchar* args, SftpStore& store) {
-String cmd = _T("LIST ");   cmd += args;
-bool   rslt;
-
-  sftpTransport.setType(AsciiFlTyp);
-
-  if (!sftpTransport.initPassiveMode(cmd, path)) return false;
-
-  rslt = sftpTransport.read(AsciiFlTyp);
-
-  store -= sftpTransport;
-
-  sftpTransport.close();   return rslt;
-  }
 
 
 // Return true when the size of the file is found, else return false
@@ -202,93 +189,51 @@ uint pos;
 //
 //   *  Closing the Transport
 
+
 // load transport buffer from a local
 
 void SftpSSL::load(Archive& ar) {return sftpTransport.load(ar);}
 
 
-#if 0
+// Returns true when the Unix like directory list (each line contains a line for each entity in the
+// current directory.  The data is stored in the data store which can be read later.
 
-  if (!skt) return;
+bool SftpSSL::list(TCchar* webPath, SftpStore& store) {
+  if (!openTransport(ListSftpIO, webPath)) {closeTransport();  return false;}
 
-  if (lastOp == WriteOp) {if (shutdown(skt, SD_SEND)) err.wsa(_T("Shutdown"));   read();}
+    if (!readTransport())                  {closeTransport();  return false;}
 
-  closesocket(skt);   skt = 0;
-#endif
+    store -= sftpTransport;
 
-// Copy sftpTransport store to web host file at webPath
-
-bool SftpSSL::stor(TCchar* webPath) {
-SSLFileType flTyp = sftpFileType(webPath);
-bool        rslt;
-
-  sftpSSLi.setType(flTyp);
-
-  if (!sftpTransport.initPassiveMode(_T("STOR"), webPath)) return false;
-
-  rslt = sftpTransport.write();   sftpTransport.close();   sftpTransport.clear();
-
-  return rslt & sftpSSLi.readRsp(226);            // 226 - Closing data connection. Requested file
-  }                                               // action successful
-
-
-// copy transport buffer to unique file name in current direcotry
-
-bool SftpSSL::stou(TCchar* webPath, String& fileName) {
-SSLFileType flTyp = sftpFileType(webPath);
-int         pos;
-bool        rslt;
-
-  sftpSSLi.setType(flTyp);
-
-  if (!sftpTransport.initPassiveMode(_T("STOU"), 0)) return false;
-
-  pos = sftpSSLi.firstResp.find(_T("FILE: "));
-
-  if (pos >= 0) fileName = sftpSSLi.firstResp.substr(pos + 6);
-
-  rslt = sftpTransport.write();   sftpTransport.close();   sftpTransport.clear();
-
-  return rslt & sftpSSLi.readRsp(226);            // 226 - Closing data connection. Requested file
-  }                                               // action successful
-
-
-// Copy sftpTransport store to web host file at webPath
-
-bool SftpSSL::append(TCchar* webPath) {
-SSLFileType flTyp = sftpFileType(webPath);
-bool        rslt;
-
-  sftpSSLi.setType(flTyp);
-
-  if (!sftpTransport.initPassiveMode(_T("APPE"), webPath)) return false;
-
-  rslt = sftpTransport.write();
-
-  return rslt & sftpSSLi.readRsp(_T('2'));
+  closeTransport(); return true;
   }
 
 
-// copy file from web host to sftpTransport buffer
+// Open Transport for a transfer, clears
 
-bool SftpSSL::retr(TCchar* webPath) {
-SSLFileType flTyp = sftpFileType(webPath);
-bool        rslt;
+bool SftpSSL::openTransport(SftpIO io, TCchar* webPath) {
+SftpTransportMode mode;
 
   sftpTransport.clear();
 
-  sftpSSLi.setType(flTyp);
-
-  if (!sftpTransport.initPassiveMode(_T("RETR"), webPath)) return false;
-
-  rslt = sftpTransport.read(flTyp);   return rslt;
+  return sftpTransport.open(mode.get(io, webPath), webPath);
   }
 
 
-void SftpSSL::store(Archive& ar) {sftpTransport.store(ar);}     // Store file in the sftpTransport
+String SftpSSL::getName() {
+int  pos = sftpSSLi.firstResp.find(_T("FILE: "));
+   return sftpSSLi.firstResp.substr(pos + 6);
+  }
 
+
+bool SftpSSL::readTransport()  {return sftpTransport.read();}   // Read from web host into store
+bool SftpSSL::writeTransport() {return sftpTransport.write();}  // Write from store to web host
 
 void SftpSSL::closeTransport() {sftpTransport.close();}         // Close Transport transaction
+
+
+
+void SftpSSL::store(Archive& ar) {sftpTransport.store(ar);}     // Store file in the sftpTransport
 
 
 
@@ -299,9 +244,56 @@ String& SftpSSL::firstResp() {return sftpSSLi.firstResp;}
 String& SftpSSL::lastResp()  {return sftpSSLi.lastResp;}
 
 
+///---------------------
 
-//-----------------------
+#if 0
+// copy transport buffer to unique file name in current direcotry
 
-//SftpStore& SftpSSL::fileData() {return sftpTransport.sftpOps;}
-//#include "SftpOps.h"
+bool SftpSSL::stou(TCchar* webPath, String& fileName) {
+int  pos;
+bool rslt;
+
+//  sftpTransport.setType(webPath);
+
+  if (!sftpTransport.open(_T("STOU"), 0, StouSftpIO)) return false;
+
+  pos = sftpSSLi.firstResp.find(_T("FILE: "));
+
+  if (pos >= 0) fileName = sftpSSLi.firstResp.substr(pos + 6);
+
+  rslt = sftpTransport.write();
+
+  sftpTransport.close();
+
+  return rslt & sftpSSLi.readRsp(226);            // 226 - Closing data connection. Requested file
+  }                                               // action successful
+
+
+// Copy sftpTransport store to web host file at webPath
+
+bool SftpSSL::append(TCchar* webPath) {
+bool rslt;
+
+//  sftpTransport.setType(webPath);
+
+  if (!sftpTransport.open(_T("APPE"), webPath, AppdSftpIO)) return false;
+
+  rslt = sftpTransport.write();
+
+  return rslt & sftpSSLi.readRsp(_T('2'));
+  }
+#endif
+#if 0
+  if (io == ListSftpIO) sftpTransport.setType(SftpFileType::Ascii);
+  else                  sftpTransport.setType(webPath);
+
+  switch (io) {
+    case StorSftpIO : cmd = _T("STOR");       break;
+    case StouSftpIO : cmd = _T("STOU");       break;
+    case RetrvSftpIO: cmd = _T("RETR");       break;
+    case AppdSftpIO : cmd = _T("APPE");       break;
+    case ListSftpIO :
+    default         : cmd = _T("LIST -l -a"); break;
+    }
+#endif
 

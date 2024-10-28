@@ -60,6 +60,7 @@
     <ClCompile Include="NotePad.cpp" />
     <ClCompile Include="NotePadRpt.cpp" />
     <ClCompile Include="DevTabs.cpp" />
+    <ClCompile Include="NoteUndrLn.cpp" />
     <ClCompile Include="RegExpr.cpp" />
     <ClCompile Include="TBCboBx.cpp" />
     <ClCompile Include="TBCbxMenu.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="NotePad.h" />
     <ClInclude Include="NotePadRpt.h" />
     <ClInclude Include="DevTabs.h" />
+    <ClInclude Include="NoteUndrLn.h" />
     <ClInclude Include="RegExpr.h" />
     <ClInclude Include="SendMsg.h" />
     <ClInclude Include="TBCboBx.h" />

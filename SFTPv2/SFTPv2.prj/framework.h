@@ -59,6 +59,3 @@ typedef basic_string<Tchar> tstring;
 
 typedef struct sockaddr SockAddr;
 typedef SOCKET Socket;
-
-
-extern TCchar* MyPassword;

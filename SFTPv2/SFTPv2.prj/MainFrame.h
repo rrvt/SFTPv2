@@ -31,7 +31,7 @@ public:                                             // Overrides
   virtual     ~MainFrame();
 
   MyToolBar&   getToolBar() {return toolBar;}
-  void         startPrgBar(int noSteps);
+  void         startPrgBar(uint noSteps);
   void         closePrgBar() {progressBar.DestroyWindow();}
 
 #ifdef _DEBUG
@@ -58,8 +58,10 @@ public:
   afx_msg void    OnSize(UINT nType, int cx, int cy);
 
   afx_msg LRESULT onStepPrgBarMsg(WPARAM wParam, LPARAM lParam);
-  afx_msg LRESULT onRmtDirMsg(    WPARAM wParam, LPARAM lParam)
-                                                          {return site.finRmtDir(wParam, lParam);}
+  afx_msg LRESULT onCompSites(    WPARAM wParam, LPARAM lParam)
+                                                        {return site.onCompSites(wParam, lParam);}
+  afx_msg LRESULT onDspRmtSite(   WPARAM wParam, LPARAM lParam)
+                                                        {return site.onDspRmtSite(wParam, lParam);}
   afx_msg LRESULT onUpdateMsg(    WPARAM wParam, LPARAM lParam)
                                                           {return site.finUpdate(wParam, lParam);}
   afx_msg LRESULT onSetWdwScroll( WPARAM wParam, LPARAM lParam);

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "AppUtilities.h"
+#include "PathXform.h"
 #include "RemoteSite.h"
 
 class Date;
@@ -10,39 +11,39 @@ class Date;
 
 class LocalSite : public RemoteSite {
 
-String root;
-String path;                      // Used to create a full path
+//String root;
+PathXform pathXform;
 
 public:
           LocalSite() { }
          ~LocalSite() { }
 
-  void    clear()               {root.clear();}
-  void    setRoot(TCchar* path) {root = toLocal(path);}
-  String& getRoot()             {return root;}
-  String& toLocal(TCchar* path) {this->path = path;   return fixSeparators();}
-
+  void    clear()                      {pathXform.clear();}
+  void    setRoot(TCchar* path)        {pathXform.set(path);}
+  String& getRoot()                    {return pathXform.get();}
+  String& toLocal(TCchar* path)        {return pathXform.toLocal(path);}
+  String& toRelative(TCchar* fullPath) {return pathXform.toRelative(fullPath);}
   String& fullDirPath( TCchar* relPath);
   String& fullFilePath(TCchar* relPath);
 
-  bool    load(TCchar* sect);
+  bool    load(TCchar* sect);               // Load/Save from/to App's IniFile
   bool    save(TCchar* sect);
 
   bool    loadTransport(TCchar* relPath);
   bool    storTransport(TCchar* relPath);
 
-  bool    createDir(TCchar* relPath);
-
   bool    getPath();
 
-  String& toRelative(TCchar* fullPath);
   void    getAttr(TCchar* relPath, int& size, Date& date);
 
 private:
 
+  bool    createDir(TCchar* relPath);
   bool    createDirectory(TCchar* path);
-  String& fixSeparators();
 
   friend class Site;
   };
+
+
+
 

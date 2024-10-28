@@ -27,29 +27,18 @@ int on = 1;
 
   if (setsockopt(skt, SOL_SOCKET, SO_REUSEADDR, (Cchar*) &on, sizeof(on)) == -1)
                                    {sftpErr.wsa(_T("Set Sock Option"));   close();   return false;}
-  return true;
+  clrLast();   return true;
   }
 
 
 bool SftpSocket::open(TCchar* host) {
-//int         on = 1;
 String      web;
 SockAddrIn4 sin;
 char        lhost[1024];
 char*       pos;
 
-#if 1
   if (!create()) return false;
-#else
-  if (skt) close();
 
-  skt = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-  if (skt == INVALID_SOCKET) {sftpErr.wsa(eMsg(host, _T("Socket")));   skt = 0;   return false;}
-
-  if (setsockopt(skt, SOL_SOCKET, SO_REUSEADDR, (Cchar*) &on, sizeof(on)) == -1)
-                                   {sftpErr.wsa(_T("Set Sock Option"));   close();   return false;}
-#endif
   memset(&sin, 0, sizeof(sin));   sin.sin_family = AF_INET;
 
   web = _T("ftp."); web += host;   ToAnsi h(web);
@@ -136,11 +125,15 @@ int          rslt;
   }
 
 
+void SftpSocket::shutDown()
+                        {if (skt && shutdown(skt, SD_SEND)) sftpErr.wsa(_T("Shutdown"));   read();}
+
+
 void SftpSocket::close() {
 
   if (!skt) return;
 
-  if (lastOp == WriteOp) {if (shutdown(skt, SD_SEND)) sftpErr.wsa(_T("Shutdown"));   read();}
+//  if (lastOp == WriteOp) {if (shutdown(skt, SD_SEND)) sftpErr.wsa(_T("Shutdown"));   read();}
 
   closesocket(skt);   skt = 0;   clear();
   }
@@ -295,4 +288,15 @@ struct timeval tv   = {noSecs * 1000, 0};
 //if (!skt.open(_T("Command"))) return false;
 //#include "SftpBlock.h"
 //#include "SftpDataIter.h"
+#if 1
+#else
+  if (skt) close();
+
+  skt = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  if (skt == INVALID_SOCKET) {sftpErr.wsa(eMsg(host, _T("Socket")));   skt = 0;   return false;}
+
+  if (setsockopt(skt, SOL_SOCKET, SO_REUSEADDR, (Cchar*) &on, sizeof(on)) == -1)
+                                   {sftpErr.wsa(_T("Set Sock Option"));   close();   return false;}
+#endif
 

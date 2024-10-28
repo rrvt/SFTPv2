@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -148,6 +148,7 @@
     <ClInclude Include="LocalSite.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="MyToolBar.h" />
+    <ClInclude Include="PathXform.h" />
     <ClInclude Include="RemoteSite.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SFTPv2.h" />
@@ -156,9 +157,10 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Site.h" />
+    <ClInclude Include="SitePickerDlg.h" />
     <ClInclude Include="UnitDsc.h" />
     <ClInclude Include="UnitList.h" />
-    <ClInclude Include="SiteLoginDlg.h" />
+    <ClInclude Include="SiteDetailsDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="AppUtilities.h" />
     <ClInclude Include="UpdateDlg.h" />
@@ -171,6 +173,7 @@
     <ClCompile Include="LocalSite.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MyToolBar.cpp" />
+    <ClCompile Include="PathXform.cpp" />
     <ClCompile Include="RemoteSite.cpp" />
     <ClCompile Include="SFTPv2.cpp" />
     <ClCompile Include="SFTPv2Doc.cpp" />
@@ -178,9 +181,10 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Site.cpp" />
     <ClCompile Include="AppUtilities.cpp" />
+    <ClCompile Include="SitePickerDlg.cpp" />
     <ClCompile Include="UnitDsc.cpp" />
     <ClCompile Include="UnitList.cpp" />
-    <ClCompile Include="SiteLoginDlg.cpp" />
+    <ClCompile Include="SiteDetailsDlg.cpp" />
     <ClCompile Include="UpdateDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +205,7 @@
   <ItemGroup>
     <Image Include="res\SFTPv2.ico" />
     <Image Include="res\Toolbar04.bmp" />
+    <Image Include="res\Toolbar05.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Library\Library\Library.vcxproj">

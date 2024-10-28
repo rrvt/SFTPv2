@@ -8,7 +8,6 @@
 
 SftpStore& SftpStore::operator -= (SftpStore& store) {
 
-  fileType  = store.fileType;   fileType = NilFlTyp;
   firstResp = store.firstResp;  firstResp.clear();
   lastResp  = store.lastResp;   lastResp.clear();
   lastCh    = store.lastCh;     lastCh = 0;

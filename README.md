@@ -185,6 +185,13 @@ The "HTML Help Workshop" (google it) must be installed on the PC.  Visual Studio
 
 Execute the msi file to install the app.
 
+## Updates
+
+### Update 10/28/24
+
+Pretty close to completion of this project.  Worked on the help file and found some difficulties
+which were fixed.
+
 ## Authors
 
 Robert R. Van Tuyl

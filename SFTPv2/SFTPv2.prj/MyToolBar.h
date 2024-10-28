@@ -11,7 +11,7 @@ struct CbxItem;
 class MyToolBar : public ToolBarBase {
 
 
-TBMenu    saveMenu;
+TBMenu    dspMenu;
 
 public:
 

@@ -62,11 +62,11 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <BasicRuntimeChecks/>
+      <BasicRuntimeChecks />
       <LanguageStandard>stdcpp20</LanguageStandard>
       <SupportJustMyCode>false</SupportJustMyCode>
-      <PrecompiledHeaderFile/>
-      <PrecompiledHeaderOutputFile/>
+      <PrecompiledHeaderFile />
+      <PrecompiledHeaderOutputFile />
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -94,10 +94,10 @@
       <ProgramDataBaseFileName>
       </ProgramDataBaseFileName>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <BasicRuntimeChecks/>
+      <BasicRuntimeChecks />
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PrecompiledHeaderFile/>
-      <PrecompiledHeaderOutputFile/>
+      <PrecompiledHeaderFile />
+      <PrecompiledHeaderOutputFile />
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -127,6 +127,7 @@
     <ClCompile Include="SftpUtilities.cpp" />
     <ClCompile Include="SftpTransport.cpp" />
     <ClCompile Include="WorkerThrd.cpp" />
+    <ClCompile Include="SftpTransportMode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugIt.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="SftpStore.h" />
     <ClInclude Include="SftpTransport.h" />
     <ClInclude Include="WorkerThrd.h" />
+    <ClInclude Include="SftpTransportMode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

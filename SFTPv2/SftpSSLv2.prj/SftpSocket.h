@@ -30,11 +30,12 @@ LastOp  lastOp;                           // Last Operation
   bool    open(TCchar* host);
   void    close();
 
-  void    clear() {SftpStore::clear();  lastOp = NilOp;}
+  void    clear()   {SftpStore::clear();}
   void    clrLast() {lastOp = NilOp; clearLast();}
 
   bool    isOpen() {return skt != 0;}
-//  Socket  operator() () {return skt;}
+
+  void    shutDown();
 
   bool    sendCmd(TCchar* cmd, int code);
   bool    sendCmd(TCchar* cmd, TCchar* args, int code);
@@ -50,8 +51,6 @@ LastOp  lastOp;                           // Last Operation
 
   bool    blkd(bool blocking);
   bool    setTimeout(int noSecs);
-
-//  void    setLastOp(LastOp lOp = NilOp) {lastOp = lOp;}
 
 private:
 
@@ -73,4 +72,7 @@ private:
 //String  lastResp;                         // Last Response String
 //Tchar   lastCh;                           // Last initial char of Response String
   //SSLrslt lastReadRslt;                     // Last read() result
+  //  Socket  operator() () {return skt;}
+//  void    setLastOp(LastOp lOp = NilOp) {lastOp = lOp;}
+
 

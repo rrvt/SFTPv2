@@ -8,6 +8,7 @@
 #include "SftpDataIter.h"
 #include "SftpErr.h"
 #include "SftpSSLi.h"
+#include "SftpSSLv2.h"
 
 
 SftpTransport sftpTransport;
@@ -16,12 +17,16 @@ SftpTransport sftpTransport;
 typedef struct linger  Linger;
 
 
-bool SftpTransport::initPassiveMode(TCchar* cmd, TCchar* arg) {
+bool SftpTransport::open(TransportMode md, TCchar* arg) {
 int     pos;
 String  s;
 TCchar* cp;
 int     v[6];
 Sin     sin;
+
+  mode = md;
+
+  if (!sftpSSLi.sendCmd(_T("TYPE"), mode.typeStg(), 200)) return false;
 
   if (!sftpSSLi.sendCmd(_T("PASV"), 227)) return false;
 
@@ -41,7 +46,7 @@ Sin     sin;
   sin.sa.sa_data[0] = char(v[0]);
   sin.sa.sa_data[1] = char(v[1]);
 
-  if (!sftpSSLi.sendCmd(cmd, arg))
+  if (!sftpSSLi.sendCmd(mode.command(), arg))
                             {sftpErr.put(_T("Passive Transport Command Failure"));  return false;}
 
   if (!open(sin)) {sftpErr.put(_T("Passive Transport Connection Failed"));   return false;}
@@ -52,23 +57,28 @@ Sin     sin;
 
 bool SftpTransport::open(Sin& sin) {
 Linger lng = {0, 1000};
+int    i;
+int    rslt;
 
   if (!SftpSocket::create()) return false;
 
   if (setsockopt(skt, SOL_SOCKET, SO_LINGER, (Cchar*) &lng, sizeof(lng)) == -1)
               {sftpErr.wsa(_T("Transport Set Linger"));       SftpSocket::close();   return false;}
 
-  if (::connect(skt, &sin.sa, sizeof(sin.sa)))
-              {sftpErr.wsa(_T("Transport Connect Failed"));   SftpSocket::close();   return false;}
-  return true;
+  for (i = 0; i < 5; i++) {
+    rslt = ::connect(skt, &sin.sa, sizeof(sin.sa));   if (!rslt) return true;
+    Sleep(10);
+    }
+
+  sftpErr.wsa(_T("Transport Connect Failed.."));   return false;
   }
 
 
-bool SftpTransport::read(SSLFileType flTyp) {
+bool SftpTransport::read() {            // SSLFileType flTyp    fileType = flTyp;
 
   if (!isOpen()) return false;
 
-  fileType = flTyp;   return SftpSocket::read();
+  return SftpSocket::read();
   }
 
 
@@ -94,47 +104,6 @@ SftpBlock*  blk;
   return true;
   }
 
-#if 0
-// load store buffer from local file
-
-bool SftpTransport::load(TCchar* path) {
-FileIO   fio;
-SftpBlock* blk;
-
-  clear();
-
-  if (!fio.open(path, FileIO::Read)) return false;
-
-  for (blk = data.allocate(); blk; blk = data.allocate()) {
-    blk->n = sizeof(FtpBfr);
-
-    if (!fio.read(blk->bfr, blk->n)) {data.deallocate(blk); break;}
-
-    data += blk;
-    }
-
-  fio.close();   return data.end() > 0;
-  }
-
-
-// stote store buffer in a local file
-
-bool SftpTransport::store(TCchar* path) {
-FileIO      fio;
-SftpStrIter iter(*this);
-SftpBlock*  blk;
-int         mode = FileIO::Write | FileIO::Create;
-bool        rslt = true;
-
-  if (!fio.open(path, (FileIO::OpenParms) mode)) return false;
-
-  for (blk = iter(); blk; blk = iter++) {
-    if (!fio.write(blk->bfr, blk->n)) {rslt = false; break;}
-    }
-
-  fio.close();   return rslt;
-  }
-#endif
 
 
 // load buffer from a local file represented by ar
@@ -142,7 +111,7 @@ bool        rslt = true;
 void SftpTransport::load(Archive& ar) {
 SftpBlock* blk;
 
-  clear();
+  SftpStore::clear();
 
   for (blk = data.allocate(); blk; blk = data.allocate()) {
     blk->n = sizeof(FtpBfr);
@@ -159,10 +128,9 @@ SftpBlock* blk;
 
 void SftpTransport::store(Archive& ar) {
 
-  switch (fileType) {
-    case AsciiFlTyp : storeAscii(ar); break;
-    case ImageFlTyp : storeImage(ar); break;
-    default         : String s = ar.getFilePath(); break;
+  switch (mode.isAscii()) {
+    case true : storeAscii(ar); break;
+    case false: storeImage(ar); break;
     }
   }
 
@@ -178,30 +146,39 @@ String       crlf = _T("\r\n");
 
 void SftpTransport::storeImage(Archive& ar) {
 SftpStrIter iter(*this);
-SftpBlock*    blk;
+SftpBlock*  blk;
 
-  for (blk = iter(); blk; blk = iter++)
-    if (!ar.write(blk->bfr, blk->n)) break;
+  for (blk = iter(); blk; blk = iter++) if (!ar.write(blk->bfr, blk->n)) break;
   }
 
 
+// close Transport
 
-///------------------------
+void SftpTransport::close() {
+TransportMode md = mode();    if (!md) return;
 
-#if 0
+  switch (md) {
+    case ListMd :
+    case GetAMd :
+    case GetIMd : break;
+    case PutAMd :
+    case PutIMd : shutDown();
+    default     : break;
+    }
 
+  SftpSocket::close();
 
-bool SftpTransport::open(Sin& sin) {
-Linger lng = {0, 1000};
+  switch (md) {
+    case ListMd :
+    case GetAMd : break;
+    case PutAMd :
+    case PutIMd :
+    case GetIMd : sftpSSLi.readRsp(226); break;
+    default     : break;
+    }
 
-  if (!sftpOps.openSkt(_T("Transport"))) return false;
-
-  if (setsockopt(skt, SOL_SOCKET, SO_LINGER, (Cchar*) &lng, sizeof(lng)) == -1)
-                                  {err.wsa(_T("Transport Set Linger"));       closeSkt();   return false;}
-
-  if (::connect(skt, &sin.sa, sizeof(sin.sa)))
-                                  {err.wsa(_T("Transport Connect Failed"));   closeSkt();   return false;}
-  return true;
+  mode.clear();
   }
-#endif
+
+
 

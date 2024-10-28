@@ -3,8 +3,10 @@
 
 #pragma once
 #include "SftpSocket.h"
+#include "SftpSSLv2.h"
 #include "SftpStore.h"
 #include "SftpUtilities.h"
+#include "SftpTransportMode.h"
 
 class SftpErr;
 class Archive;
@@ -16,31 +18,30 @@ struct sockaddr_in in;
 } Sin;
 
 
-class SftpTransport : public SftpSocket {         //  : public SftpStore
+class SftpTransport : public SftpSocket {
+
+SftpTransportMode mode;
+
 public:
 
   SftpTransport() { }
  ~SftpTransport() {close();}
 
-  void clear() {SftpSocket::clear();}
+  bool open(TransportMode md, TCchar* arg);             // Open Transport for moving data to/from web
+                                                  // from/to  store
+  bool read();                                    // Read data from web host into store
+  bool write();                                   // Write data in store to web host
 
-  bool initPassiveMode(TCchar* cmd, TCchar* arg);
+  void close();                                   // close Transport
+
+  void load( Archive& ar);                        // load/store buffer from/to a local file
+  void store(Archive& ar);                        // represented by ar
+
+  int  nBytes();                                  // Compute the number of bytes in the store buffer
+                                                  // archive
+private:
 
   bool open(Sin& sin);
-  void close() {SftpSocket::close();}
-
-  bool read(SSLFileType flTyp);             // Read everything from web host into store
-
-  int  nBytes();                            // Compute the number of bytes in the store buffer
-
-  bool write();                             // Write everything in store to web host
-
-//  bool load(TCchar* path);                // load store buffer from local file
-//  bool store(TCchar* path);               // store store buffer in a local file
-  void load(Archive& ar);                   // load buffer from a local file represented by ar
-  void store(Archive& ar);                  // Store buffer content to a local file represented by
-                                            // archive
-private:
 
   void storeAscii(Archive& ar);
   void storeImage(Archive& ar);
@@ -51,12 +52,4 @@ extern SftpTransport sftpTransport;
 
 
 
-
-//----------------------
-
-//  SftpTransport() : sftpOps(*(SftpOps*)0), err(*(SftpErr*)0), skt(*(Socket*)0) { }
-
-//SftpOps& sftpOps;
-
-//Socket&  skt;                             // Windows Socket
 

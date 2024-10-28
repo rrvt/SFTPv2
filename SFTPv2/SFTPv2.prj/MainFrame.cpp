@@ -23,7 +23,8 @@ BEGIN_MESSAGE_MAP(MainFrame, CFrameWndEx)
   ON_WM_SIZE()
 
 
-  ON_MESSAGE(ID_RmtDirMsg,     &onRmtDirMsg)
+  ON_MESSAGE(ID_CompSitesMsg,  &onCompSites)
+  ON_MESSAGE(ID_DspRmtSiteMsg, &onDspRmtSite)
   ON_MESSAGE(ID_UpdateMsg,     &onUpdateMsg)
   ON_MESSAGE(ID_StepPrgBarMsg, &onStepPrgBarMsg)
   ON_MESSAGE(ID_SetWdwScroll,  &onSetWdwScroll)
@@ -111,14 +112,14 @@ LRESULT MainFrame::OnResetToolBar(WPARAM wParam, LPARAM lParam) {setupToolBar();
 void MainFrame::setupToolBar() {
 CRect winRect;   GetWindowRect(&winRect);   toolBar.set(winRect);
 
-  toolBar.addMenu(   ID_TBSaveMenu, IDR_TBSaveMenu,  6);
+  toolBar.addMenu(ID_DisplayList, IDR_DisplayList, 6);
   }
 
 
 // Progress Bar functions
 
 
-void MainFrame::startPrgBar(int noSteps) {
+void MainFrame::startPrgBar(uint noSteps) {
 CRect rect;
 CRect winRect;
 
@@ -128,9 +129,11 @@ CRect winRect;
 
   progressBar.Create(WS_CHILD | WS_VISIBLE | PBS_SMOOTH, rect, this, IDC_ProgCtrl);
 
-  noSteps += noSteps / 10;
+  if      (0 <= noSteps && noSteps <  4) noSteps = 25;
+  else if (4 <= noSteps && noSteps < 10) noSteps = 50;
+  else                                   noSteps += noSteps / 10;
 
-  progressBar.SetRange(0, noSteps);    progressBar.SetPos(0);   progressBar.SetStep(1);
+  progressBar.SetRange(0, noSteps);   progressBar.SetPos(0);   progressBar.SetStep(1);
   }
 
 
@@ -153,17 +156,3 @@ void MainFrame::Dump(CDumpContext& dc) const {CFrameWndEx::Dump(dc);}
 #endif //_DEBUG
 
 
-
-///-----------------------
-#if 0
-#ifdef Examples
-  toolBar.addButton( ID_Button, _T("Load Combo"));
-  toolBar.addEditBox(ID_EditBox, 20);
-  toolBar.addMenu(   ID_Menu,  IDR_TBMenu,  _T("Menu 1"));
-  toolBar.addMenu(   ID_Menu1, IDR_TBMenu1, _T("Menu 2"));
-  toolBar.addCBx(    ID_CboBx);
-  toolBar.addMenu(   ID_TBSaveMenu, IDR_TBSaveMenu,  7);
-
-#else
-#endif
-#endif

@@ -21,7 +21,7 @@ public:
   CNG() : hAES(0), hKey(0) { }
  ~CNG();
 
-  CNGblock* operator() (TCchar* tc,     TCchar* key);   // Accepts a string and key, returns a
+  CNGblock* operator() (TCchar* tc,    TCchar* key);    // Accepts a string and key, returns a
                                                         // zero or ptr to an encrypted block
   TCchar*   operator() (CNGblock& blk, TCchar* key);    // Accepts an encrypted block and key,
                                                         // returns zero or ptr to a string

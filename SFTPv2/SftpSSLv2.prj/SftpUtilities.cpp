@@ -7,7 +7,7 @@
 
 
 
-
+#if 0
 static TCchar* asciiExt[] = {_T("htm"), _T("html"), _T("css"), _T("dwt"),
                              _T("txt"), _T("cpp"),  _T("h")
                              };
@@ -35,4 +35,4 @@ TCchar* sftpFileType(SSLFileType ft) {
     }
   return 0;
   }
-
+#endif
